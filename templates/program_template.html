@@ -1,8 +1,7 @@
 {% macro render_event_cell(event, duration_slots) %}
 <td rowspan="{{ duration_slots }}" style="padding:5px; text-align:center; background-color:#f0f8ff; min-width:120px;">
-    <strong data-tooltip="{{ event.detail }}">{{ event.title }}</strong>
-    <br>
-    <small>{{ event.event_start }} → {{ event.event_end }}</small>
+  <strong data-tooltip="{{ event.detail }}">{{ event.title }}</strong><br>
+  <small>{{ event.event_start }} → {{ event.event_end }}</small>
 </td>
 {% endmacro %}
 
@@ -26,74 +25,78 @@
 
 {% set interval = 30 %}
 {% for d in program.days %}
-{% set tid       = d.day|lower|replace(" ", "_") %}
-{% set stages    = d.stage_count|int %}
-{% set start_min = (d.day_start.split(':')[0]|int)*60 %}
-{% set end_min   = (d.day_ends.split(':')[0]|int)*60 %}
-{% set slots     = (end_min - start_min)//interval %}
-{% set active    = {} %}
-<section id="{{ tid }}" role="tabpanel" {% if not loop.first %}hidden{% endif %}>
-  <table>
-    <thead>
-      <tr>
-        <th>Time</th>
-        {% for s in range(1, stages+1) %}
-          <th style="padding:5px; text-align:center; min-width:120px;">Stage {{ s }}</th>
-        {% endfor %}
-      </tr>
-    </thead>
-    <tbody>
-      {% for slot in range(slots) %}
-      {% set now = start_min + slot*interval %}
-      <tr>
-        <td>{{ "%02d:%02d"|format(now//60, now%60) }}</td>
-
-        {% for s in range(1, stages+1) %}
-          {% set key = d.day ~ '-' ~ s ~ '-' ~ now %}
-          {% if key not in active %}
-            {% set printed = false %}
-            {% for ev in events if ev.day==d.day and ev.stage|int==s %}
-              {% set st = ev.event_start.split(':') %}
-              {% set en = ev.event_end.split(':') %}
-              {% set st_m = st[0]|int*60 + st[1]|int %}
-              {% set en_m = en[0]|int*60 + en[1]|int %}
-              {% set dur  = (en_m - st_m)//interval %}
-              {% if st_m == now %}
-                {# mark slots covered by rowspan #}
-                {% for i in range(1, dur) %}
-                  {% set _ = active.update({ d.day ~ '-' ~ s ~ '-' ~ (now+i*interval): true }) %}
+  {% set tid = d.day|lower|replace(" ", "_") %}
+  {% set stages = d.stage_count|int %}
+  {% set start_min = (d.day_start.split(':')[0]|int) * 60 %}
+  {% set end_min = (d.day_ends.split(':')[0]|int) * 60 %}
+  {% set slots = (end_min - start_min) // interval %}
+  {% set active = {} %}
+  <section id="{{ tid }}" role="tabpanel" {% if not loop.first %}hidden{% endif %}>
+    <table>
+      <thead>
+        <tr>
+          <th>Time</th>
+          {% for s in range(1, stages + 1) %}
+            <th style="padding:5px; text-align:center; min-width:120px;">Stage {{ s }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for slot in range(slots) %}
+          {% set now = start_min + slot * interval %}
+          <tr>
+            <td>{{ "%02d:%02d"|format(now // 60, now % 60) }}</td>
+            {% for s in range(1, stages + 1) %}
+              {% set key = d.day ~ '-' ~ s ~ '-' ~ now %}
+              {% if key in active %}
+                {# Skip this slot — it's part of a rowspan #}
+                <td style="border-bottom:none;"></td>
+              {% else %}
+                {% set rendered = false %}
+                {% for ev in events if ev.day == d.day and ev.stage|int == s %}
+                  {% set st = ev.event_start.split(':') %}
+                  {% set en = ev.event_end.split(':') %}
+                  {% set st_m = st[0]|int * 60 + st[1]|int %}
+                  {% set en_m = en[0]|int * 60 + en[1]|int %}
+                  {% set dur = (en_m - st_m) // interval %}
+                  {% if st_m == now %}
+                    {% for i in range(1, dur) %}
+                      {% set _ = active.update({ d.day ~ '-' ~ s ~ '-' ~ (now + i * interval): true }) %}
+                    {% endfor %}
+                    {{ render_event_cell(ev, dur) }}
+                    {% set rendered = true %}
+                  {% endif %}
                 {% endfor %}
-                {{ render_event_cell(ev, dur) }}
-                {% set printed = true %}
+                {% if not rendered %}
+                  <td style="border-bottom:none;"></td>
+                {% endif %}
               {% endif %}
             {% endfor %}
-            {% if not printed %}<td></td>{% endif %}
-          {% endif %}
+          </tr>
         {% endfor %}
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</section>
+      </tbody>
+    </table>
+  </section>
 {% endfor %}
 
-<!-- Tab switching -->
+<!-- Tab Switching -->
 <script>
-document.addEventListener("DOMContentLoaded",()=> {
-  const tabs   = document.querySelectorAll('nav[role=tablist] a');
+document.addEventListener("DOMContentLoaded", () => {
+  const tabs = document.querySelectorAll('nav[role=tablist] a');
   const panels = document.querySelectorAll('section[role=tabpanel]');
-  tabs.forEach(tab=>{
-    tab.addEventListener('click',e=>{
+  tabs.forEach(tab => {
+    tab.addEventListener('click', e => {
       e.preventDefault();
       const id = tab.getAttribute('href').substring(1);
-      panels.forEach(p=>p.hidden = true);
-      tabs.forEach(t=>t.classList.remove('active'));
+      panels.forEach(p => p.hidden = true);
+      tabs.forEach(t => t.classList.remove('active'));
       document.getElementById(id).hidden = false;
       tab.classList.add('active');
     });
   });
 });
 </script>
+
 {% else %}
 <p>No program yet.</p>
 {% endif %}
