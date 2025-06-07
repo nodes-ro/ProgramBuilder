@@ -4,6 +4,24 @@
     <meta charset="utf-8"/>
     <title>Event Program Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet"/>
+
+    <style>
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #export-section, #export-section * {
+    visibility: visible;
+  }
+  #export-section {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}
+</style>
+
 </head>
 <body class="container">
 
@@ -136,10 +154,12 @@
                 </button>
             </form>
 
+<button onclick="window.print()">Print Program</button>
+
         </aside>
 
         <!-- ────────── 2. SCHEDULE (right‑two‑thirds) ────────── -->
-        <section style="overflow-x: auto; width: 100%; display: block; padding-left: 1rem;">
+        <section  id="export-section" style="overflow-x: auto; width: 100%; display: block; padding-left: 1rem;">
             {% include "program_template.html" %}
         </section>
     </div>
