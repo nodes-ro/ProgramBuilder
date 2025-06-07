@@ -95,6 +95,14 @@
                     </select>
                 </label>
 
+                    <label>Select Stage
+  <select name="stage" id="stage-select" required>
+    <option disabled selected value="">Select a stage</option>
+    {% for i in range(1, 11) %}
+      <option value="{{ i }}" class="stage-option" data-stage="{{ i }}">{{ i }}</option>
+    {% endfor %}
+  </select>
+</label>
 
                     <label>Event title
                         <input name="title" placeholder="Event title" required type="text"/>

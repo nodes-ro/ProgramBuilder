@@ -47,6 +47,23 @@ def home():
                     program["days"].append(day_info)
                     flash(f"Day '{day_info['day']}' added to the program.", "success")
 
+        elif form_type == "new_event":
+            if not program:
+                flash("Create a program and add at least one day before adding events.", "error")
+            else:
+                event = {
+                    "day": request.form.get("day"),
+                    "stage": request.form.get("stage"),
+                    "title": request.form.get("title"),
+                    "detail": request.form.get("detail"),
+                    "event_start": request.form.get("event_start"),
+                    "event_end": request.form.get("event_end"),
+                    "picture": None  # You can add file upload support later
+                }
+                events.append(event)
+                flash(f"Event '{event['title']}' added to {event['day']} (Stage {event['stage']}).", "success")
+
+
         elif form_type == "clear_program":
             program = None
             flash("Program cleared. You can create a new one now.", "info")

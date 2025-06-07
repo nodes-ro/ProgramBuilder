@@ -1,7 +1,6 @@
 {% if program %}
-<h3>{{ program.name }}</h3>
+<h3 style="margin-bottom: 1rem;">{{ program.name }}</h3>
 
-<!-- Tab container -->
 <div class="tabs">
   <!-- Tab Navigation -->
   <nav role="tablist">
@@ -32,22 +31,32 @@
           {% endfor %}
         </tr>
       </thead>
-      <tbody>
-        {% for hour in range(start_hour, end_hour) %}
-        <tr>
-          <td>{{ "%02d:00" % hour }}</td>
-          {% for _ in range(stage_count) %}
-          <td></td>
-          {% endfor %}
-        </tr>
-        {% endfor %}
-      </tbody>
+ <tbody>
+  {% for hour in range(start_hour, end_hour) %}
+  <tr>
+    <td>{{ "%02d:00" % hour }}</td>
+    {% for stage in range(1, stage_count + 1) %}
+    <td>
+      {% for event in events %}
+        {% if event.day == day.day
+               and event.stage|int == stage
+               and event.event_start.split(':')[0]|int == hour %}
+          <strong>{{ event.title }}</strong><br>
+          <em>{{ event.detail }}</em>
+        {% endif %}
+      {% endfor %}
+    </td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+</tbody>
+
     </table>
   </section>
   {% endfor %}
 </div>
 
-<!-- JS for tab switching -->
+<!-- Tab Switching Script -->
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const tabs = document.querySelectorAll("nav[role=tablist] a");
@@ -56,30 +65,24 @@
     tabs.forEach(tab => {
       tab.addEventListener("click", e => {
         e.preventDefault();
-
         const targetId = tab.getAttribute("href").substring(1);
-
-        // Hide all panels
         panels.forEach(panel => panel.style.display = "none");
-
-        // Remove active class from all tabs
         tabs.forEach(t => t.classList.remove("active"));
-
-        // Show the selected panel
         document.getElementById(targetId).style.display = "block";
-
-        // Mark the clicked tab as active
         tab.classList.add("active");
       });
     });
   });
 </script>
 
-<!-- Optional CSS for active tab styling -->
+<!-- Optional CSS -->
 <style>
   nav[role=tablist] a.active {
     font-weight: bold;
     border-bottom: 2px solid currentColor;
+  }
+  td {
+    vertical-align: top;
   }
 </style>
 {% else %}
