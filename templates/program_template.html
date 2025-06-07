@@ -33,12 +33,13 @@
 
   <section id="{{ tab_id }}" role="tabpanel" {% if not loop.first %}style="display:none;"{% endif %}>
     <h4>{{ day.day }}</h4>
-    <table class="striped">
+    <table>
       <thead>
         <tr>
           <th>Time</th>
           {% for stage in range(1, stage_count + 1) %}
-          <th>Stage {{ stage }}</th>
+         <th style="min-width: 10%">Stage {{ stage }}</th>
+
           {% endfor %}
         </tr>
       </thead>
