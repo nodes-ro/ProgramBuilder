@@ -1,71 +1,87 @@
 {% if program %}
 <h3>{{ program.name }}</h3>
 
-{% set days_in_program = program.days | map(attribute='day') | list %}
-{% set unique_days = days_in_program | unique %}
-
-<!-- Tab Navigation -->
-<nav>
+<!-- Tab container -->
+<div class="tabs">
+  <!-- Tab Navigation -->
+  <nav role="tablist">
     <ul>
-        {% for day in unique_days %}
-        <li><a href="#{{ day | lower }}" onclick="showTab('{{ day | lower }}')">{{ day }}</a></li>
-        {% endfor %}
+      {% for day in program.days %}
+      {% set tab_id = day.day | lower | replace(" ", "_") %}
+      <li><a href="#{{ tab_id }}" role="tab" {% if loop.first %}class="active"{% endif %}>{{ day.day }}</a></li>
+      {% endfor %}
     </ul>
-</nav>
+  </nav>
 
-<!-- Tab Content Panels -->
-{% for day in unique_days %}
-<section id="{{ day | lower }}" class="day-tab" style="display: none;">
-    <h4>{{ day }}</h4>
-    {% set day_events = events | selectattr("day", "equalto", day) | list %}
-    {% if day_events %}
+  <!-- Tab Content Sections -->
+  {% for day in program.days %}
+  {% set tab_id = day.day | lower | replace(" ", "_") %}
+  {% set start_hour = day.day_start.split(':')[0] | int %}
+  {% set end_hour = day.day_ends.split(':')[0] | int %}
+  {% set stage_count = day.stage_count | int %}
+
+  <section id="{{ tab_id }}" role="tabpanel" {% if not loop.first %}style="display:none;"{% endif %}>
+    <h4>{{ day.day }}</h4>
+
     <table>
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Time</th>
-                <th>Stage</th>
-                <th>Description</th>
-                <th>Image</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for event in day_events %}
-            <tr>
-                <td>{{ event.title }}</td>
-                <td>{{ event.event_start }} – {{ event.event_end }}</td>
-                <td>{{ event.stage or "-" }}</td>
-                <td>{{ event.detail }}</td>
-                <td>
-                    {% if event.picture %}
-                    <img src="{{ url_for('static', filename=event.picture) }}" alt="Event image" style="max-width:80px;"/>
-                    {% else %}
-                    —
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
+      <thead>
+        <tr>
+          <th>Time</th>
+          {% for stage in range(1, stage_count + 1) %}
+          <th>Stage {{ stage }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for hour in range(start_hour, end_hour) %}
+        <tr>
+          <td>{{ "%02d:00" % hour }}</td>
+          {% for _ in range(stage_count) %}
+          <td></td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
-    {% else %}
-    <p>No events scheduled for {{ day }}.</p>
-    {% endif %}
-</section>
-{% endfor %}
+  </section>
+  {% endfor %}
+</div>
 
+<!-- JS for tab switching -->
 <script>
-    function showTab(dayId) {
-        document.querySelectorAll('.day-tab').forEach(el => el.style.display = 'none');
-        document.getElementById(dayId).style.display = 'block';
-    }
+  document.addEventListener("DOMContentLoaded", () => {
+    const tabs = document.querySelectorAll("nav[role=tablist] a");
+    const panels = document.querySelectorAll("section[role=tabpanel]");
 
-    // Show first tab by default
-    document.addEventListener("DOMContentLoaded", () => {
-        const firstTab = document.querySelector('.day-tab');
-        if (firstTab) firstTab.style.display = 'block';
+    tabs.forEach(tab => {
+      tab.addEventListener("click", e => {
+        e.preventDefault();
+
+        const targetId = tab.getAttribute("href").substring(1);
+
+        // Hide all panels
+        panels.forEach(panel => panel.style.display = "none");
+
+        // Remove active class from all tabs
+        tabs.forEach(t => t.classList.remove("active"));
+
+        // Show the selected panel
+        document.getElementById(targetId).style.display = "block";
+
+        // Mark the clicked tab as active
+        tab.classList.add("active");
+      });
     });
+  });
 </script>
 
+<!-- Optional CSS for active tab styling -->
+<style>
+  nav[role=tablist] a.active {
+    font-weight: bold;
+    border-bottom: 2px solid currentColor;
+  }
+</style>
 {% else %}
 <p>No program yet.</p>
 {% endif %}
