@@ -28,17 +28,17 @@
 
     <!-- Accordion 1: Create New Program -->
   <details {% if active_program_id %}disabled{% endif %} open>
-    <summary><h4>Create Program</h4></summary>
+    <summary><h4>Program name</h4></summary>
 
     {% if active_program_id %}
         <p><em>A program is already active. You can add days and events to it.</em></p>
     {% else %}
         <form method="post">
             <input type="hidden" name="form_type" value="new_program">
-            <label>Program name
+
                 <input name="program_name" placeholder="e.g. 2025 Tech Festival" required type="text"/>
-            </label>
-            <button class="secondary" type="submit">Create Program</button>
+
+            <button class="secondary" type="submit">Save Program</button>
         </form>
     {% endif %}
 </details>
@@ -46,11 +46,11 @@
 
     <!-- Accordion 2: Create Day -->
     <details>
-        <summary><h4>Create Day</h4></summary>
+        <summary><h4>Add Day</h4></summary>
         <form method="post">
             <input type="hidden" name="form_type" value="day_schedule">
 
-            <label>Select Program
+            <label>Your Program
                 <select name="program_id" required>
                     {% for program in programs %}
                     <option value="{{ program.id }}">{{ program.name }}</option>
@@ -75,23 +75,25 @@
                 </label>
             </div>
 
+            <label for="stage-count">How many stages does your event have?</label>
+            <select id="stage-count" onchange="renderStages()" name="stage_count">
+                <option value="0" selected>Select number of stages</option>
+                {% for i in range(1, 11) %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+
             <button class="secondary" type="submit">Save Day</button>
         </form>
     </details>
 
+
+
     <!-- Accordion 3: Add Events to Program -->
     <details>
-        <summary><h4>Add Events to Program</h4></summary>
+        <summary><h4>Add Events To Your Day</h4></summary>
         <form enctype="multipart/form-data" method="post">
             <input type="hidden" name="form_type" value="new_event">
-
-            <label>Select Program
-                <select name="program_id" required>
-                    {% for program in programs %}
-                    <option value="{{ program.id }}">{{ program.name }}</option>
-                    {% endfor %}
-                </select>
-            </label>
 
             <label>Select Day
                 <select name="day" required>
@@ -119,10 +121,6 @@
 
             <label>Event ends at
                 <input name="event_ends" required type="time"/>
-            </label>
-
-            <label>Stage (optional)
-                <input name="stage" placeholder="Stage name (e.g. Main, Workshop)" type="text"/>
             </label>
 
             <button class="secondary" type="submit">Add Event</button>
