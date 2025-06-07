@@ -124,6 +124,13 @@
         </form>
     </details>
 
+       <form method="post" style="margin-top: 1rem;">
+    <input type="hidden" name="form_type" value="clear_program">
+    <button class="contrast" type="submit" onclick="return confirm('Are you sure you want to clear the current program?')">
+        Clear Program
+    </button>
+</form>
+
 </aside>
 
 
@@ -132,6 +139,8 @@
             {% include "program_template.html" %}
         </section>
     </div>
+
+
 </main>
 </body>
 </html>
