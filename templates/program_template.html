@@ -1,139 +1,119 @@
-{% if program %}
-<h3 style="margin-bottom: 1rem;">{{ program.name }}</h3>
-
-<div class="tabs">
-    <!-- Tab Navigation -->
-    <nav role="tablist">
-        <ul>
-            {% for day in program.days %}
-            {% set tab_id = day.day | lower | replace(" ", "_") %}
-            <li>
-                <a href="#{{ tab_id }}" role="tab" {% if loop.first %}class="active"{% endif %}>{{ day.day }}</a>
-            </li>
-            {% endfor %}
-        </ul>
-    </nav>
-
-    <!-- Tab Content Sections -->
-    {% for day in program.days %}
-    {% set tab_id = day.day | lower | replace(" ", "_") %}
-    {% set start_hour = day.day_start.split(':')[0] | int %}
-    {% set end_hour = day.day_ends.split(':')[0] | int %}
-    {% set stage_count = day.stage_count | int %}
-
-    <section id="{{ tab_id }}" role="tabpanel" {% if not loop.first %}style="display:none;"{% endif %}>
-        <h4>{{ day.day }}</h4>
-
-        <table class="striped">
-            <thead>
-            <tr>
-                <th>Time</th>
-                {% for stage in range(1, stage_count + 1) %}
-                <th>Stage {{ stage }}</th>
-                {% endfor %}
-            </tr>
-            </thead>
-
-            <tbody>
-            {% set interval_minutes = 30 %}
-            {% set start_minutes = start_hour * 60 %}
-            {% set end_minutes = end_hour * 60 %}
-            {% set total_slots = (end_minutes - start_minutes) // interval_minutes %}
-
-            {% for slot in range(total_slots) %}
-            {% set current_minutes = start_minutes + slot * interval_minutes %}
-            {% set time_hour = current_minutes // 60 %}
-            {% set time_minute = current_minutes % 60 %}
-            {% set time_label = "%02d:%02d" % (time_hour, time_minute) %}
-
-            <tr>
-                <td>{{ time_label }}</td>
-
-                {% for stage in range(1, stage_count + 1) %}
-                {% set found = false %}
-                {% for event in events %}
-                {% if event.day == day.day and event.stage|int == stage %}
-                {% set ev_start = event.event_start.split(":") %}
-                {% set ev_end = event.event_end.split(":") %}
-                {% set ev_start_minutes = ev_start[0]|int * 60 + ev_start[1]|int %}
-                {% set ev_end_minutes = ev_end[0]|int * 60 + ev_end[1]|int %}
-                {% set duration_slots = (ev_end_minutes - ev_start_minutes) // interval_minutes %}
-
-                {% if ev_start_minutes == current_minutes %}
-               <td rowspan="{{ duration_slots }}" style="
+{% macro render_event_cell(event, duration_slots) %}
+<td rowspan="{{ duration_slots }}" style="
     background-color: #f0f8ff;
     border-radius: 0.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     vertical-align: top;
 ">
-  <strong>{{ event.title }}</strong><br>
+  <strong data-tooltip="{{ event.detail }}">{{ event.title }}</strong><br>
   <small style="color: #555;">{{ event.event_start }} → {{ event.event_end }}</small>
-  <p style="margin-top: 0.5rem; margin-bottom: 0;">{{ event.detail }}</p>
 </td>
+{% endmacro %}
 
+{% if program %}
+<h3 style="margin-bottom: 1rem;">{{ program.name }}</h3>
 
+<div class="tabs">
+  <nav role="tablist">
+    <ul>
+      {% for day in program.days %}
+      {% set tab_id = day.day | lower | replace(" ", "_") %}
+      <li>
+        <a href="#{{ tab_id }}" role="tab" {% if loop.first %}class="active"{% endif %}>{{ day.day }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </nav>
 
-                </td>
-                {% set found = true %}
-                {% endif %}
-                {% endif %}
-                {% endfor %}
+  {% for day in program.days %}
+  {% set tab_id = day.day | lower | replace(" ", "_") %}
+  {% set start_hour = day.day_start.split(':')[0] | int %}
+  {% set end_hour = day.day_ends.split(':')[0] | int %}
+  {% set stage_count = day.stage_count | int %}
 
-                {% if not found %}
-                {% set skip = false %}
-                {% for event in events %}
-                {% if event.day == day.day and event.stage|int == stage %}
+  <section id="{{ tab_id }}" role="tabpanel" {% if not loop.first %}style="display:none;"{% endif %}>
+    <h4>{{ day.day }}</h4>
+    <table class="striped">
+      <thead>
+        <tr>
+          <th>Time</th>
+          {% for stage in range(1, stage_count + 1) %}
+          <th>Stage {{ stage }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% set interval_minutes = 30 %}
+        {% set start_minutes = start_hour * 60 %}
+        {% set end_minutes = end_hour * 60 %}
+        {% for slot in range((end_minutes - start_minutes) // interval_minutes) %}
+          {% set current_minutes = start_minutes + slot * interval_minutes %}
+          {% set time_label = "%02d:%02d" % (current_minutes // 60, current_minutes % 60) %}
+          <tr>
+            <td>{{ time_label }}</td>
+            {% for stage in range(1, stage_count + 1) %}
+              {% set cell_rendered = false %}
+              {% for event in events if event.day == day.day and event.stage|int == stage %}
                 {% set ev_start = event.event_start.split(":") %}
                 {% set ev_end = event.event_end.split(":") %}
-                {% set ev_start_minutes = ev_start[0]|int * 60 + ev_start[1]|int %}
-                {% set ev_end_minutes = ev_end[0]|int * 60 + ev_end[1]|int %}
-                {% if current_minutes > ev_start_minutes and current_minutes < ev_end_minutes %}
-                {% set skip = true %}
+                {% set ev_start_min = ev_start[0]|int * 60 + ev_start[1]|int %}
+                {% set ev_end_min = ev_end[0]|int * 60 + ev_end[1]|int %}
+                {% set duration_slots = (ev_end_min - ev_start_min) // interval_minutes %}
+
+                {% if ev_start_min == current_minutes %}
+                  {{ render_event_cell(event, duration_slots) }}
+                  {% set cell_rendered = true %}
                 {% endif %}
-                {% endif %}
+              {% endfor %}
+
+              {% if not cell_rendered %}
+                {% set skip = false %}
+                {% for event in events if event.day == day.day and event.stage|int == stage %}
+                  {% set ev_start = event.event_start.split(":") %}
+                  {% set ev_end = event.event_end.split(":") %}
+                  {% set ev_start_min = ev_start[0]|int * 60 + ev_start[1]|int %}
+                  {% set ev_end_min = ev_end[0]|int * 60 + ev_end[1]|int %}
+                  {% if current_minutes > ev_start_min and current_minutes < ev_end_min %}
+                    {% set skip = true %}
+                  {% endif %}
                 {% endfor %}
-                {% if not skip %}
-                <td></td>
-                {% endif %}
-                {% endif %}
-                {% endfor %}
-            </tr>
+                {% if not skip %}<td></td>{% endif %}
+              {% endif %}
             {% endfor %}
-            </tbody>
-        </table>
-    </section>
-    {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endfor %}
 </div>
 
-<!-- Tab Switching Script -->
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const tabs = document.querySelectorAll("nav[role=tablist] a");
-        const panels = document.querySelectorAll("section[role=tabpanel]");
+  document.addEventListener("DOMContentLoaded", () => {
+    const tabs = document.querySelectorAll("nav[role=tablist] a");
+    const panels = document.querySelectorAll("section[role=tabpanel]");
 
-        tabs.forEach(tab => {
-            tab.addEventListener("click", e => {
-                e.preventDefault();
-                const targetId = tab.getAttribute("href").substring(1);
-                panels.forEach(panel => panel.style.display = "none");
-                tabs.forEach(t => t.classList.remove("active"));
-                document.getElementById(targetId).style.display = "block";
-                tab.classList.add("active");
-            });
-        });
+    tabs.forEach(tab => {
+      tab.addEventListener("click", e => {
+        e.preventDefault();
+        const targetId = tab.getAttribute("href").substring(1);
+        panels.forEach(panel => panel.style.display = "none");
+        tabs.forEach(t => t.classList.remove("active"));
+        document.getElementById(targetId).style.display = "block";
+        tab.classList.add("active");
+      });
     });
+  });
 </script>
 
-<!-- Optional CSS -->
 <style>
-    nav[role=tablist] a.active {
-        font-weight: bold;
-        border-bottom: 2px solid currentColor;
-    }
-
-    td {
-        vertical-align: top;
-    }
+  nav[role=tablist] a.active {
+    font-weight: bold;
+    border-bottom: 2px solid currentColor;
+  }
+  td {
+    vertical-align: top;
+  }
 </style>
 {% else %}
 <p>No program yet.</p>
