@@ -34,7 +34,7 @@
         <p><em>A program is already active. You can add days and events to it.</em></p>
     {% else %}
         <form method="post">
-            <input type="hidden" name="form_type" value="new_program">
+        <input type="hidden" name="form_type" value="new_program">
 
                 <input name="program_name" placeholder="e.g. 2025 Tech Festival" required type="text"/>
 
@@ -44,48 +44,45 @@
 </details>
 
 
-    <!-- Accordion 2: Create Day -->
-    <details>
-        <summary><h4>Add Day</h4></summary>
-        <form method="post">
-            <input type="hidden" name="form_type" value="day_schedule">
+<!-- Accordion 2: Add Day -->
+<details {% if not program %}disabled{% endif %}>
+    <summary><h4>Add Day</h4></summary>
+    <form method="post">
+        <input type="hidden" name="form_type" value="day_schedule">
 
-            <label>Your Program
-                <select name="program_id" required>
-                    {% for program in programs %}
-                    <option value="{{ program.id }}">{{ program.name }}</option>
-                    {% endfor %}
-                </select>
+        {% if program %}
+        <label>Your Program: <strong>{{ program.name }}</strong></label>
+        {% endif %}
+
+        <label for="day">Day</label>
+        <select name="day" id="day" required>
+            <option value="" disabled selected>Select a day</option>
+            {% for d in days %}
+                <option value="{{ d }}">{{ d }}</option>
+            {% endfor %}
+        </select>
+
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: var(--pico-spacing);">
+            <label for="day_start">Day starts
+                <input id="day_start" name="day_start" required type="time"/>
             </label>
+            <label for="day_ends">Day ends
+                <input id="day_ends" name="day_ends" required type="time"/>
+            </label>
+        </div>
 
-            <label for="day">Day</label>
-            <select name="day" id="day" required>
-                <option value="" disabled selected>Select a day</option>
-                {% for d in days %}
-                    <option value="{{ d }}">{{ d }}</option>
-                {% endfor %}
-            </select>
+        <label for="stage-count">How many stages does your event have?</label>
+        <select id="stage-count" name="stage_count" required>
+            <option value="" disabled selected>Select number of stages</option>
+            {% for i in range(1, 11) %}
+            <option value="{{ i }}">{{ i }}</option>
+            {% endfor %}
+        </select>
 
-            <div class="grid" style="grid-template-columns: 1fr 1fr; gap: var(--pico-spacing);">
-                <label for="day_start">Day starts
-                    <input id="day_start" name="day_start" required type="time"/>
-                </label>
-                <label for="day_ends">Day ends
-                    <input id="day_ends" name="day_ends" required type="time"/>
-                </label>
-            </div>
+        <button class="secondary" type="submit">Save Day</button>
+    </form>
+</details>
 
-            <label for="stage-count">How many stages does your event have?</label>
-            <select id="stage-count" onchange="renderStages()" name="stage_count">
-                <option value="0" selected>Select number of stages</option>
-                {% for i in range(1, 11) %}
-                <option value="{{ i }}">{{ i }}</option>
-                {% endfor %}
-            </select>
-
-            <button class="secondary" type="submit">Save Day</button>
-        </form>
-    </details>
 
 
 
