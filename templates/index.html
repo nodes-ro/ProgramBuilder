@@ -4,62 +4,55 @@
     <meta charset="utf-8"/>
     <title>Event Program Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet"/>
-
-
 </head>
 <body class="container">
-
 
 <main>
     <h1>Event Program Generator</h1>
 
     {%- with msgs = get_flashed_messages(with_categories=true) %}
-    {%- if msgs %}
-    {%- for cat, msg in msgs %}
-    <article class="alert {{ cat }}">{{ msg }}</article>
-    {%- endfor %}
-    {%- endif %}
+        {%- if msgs %}
+            {%- for cat, msg in msgs %}
+                <article class="alert {{ cat }}">{{ msg }}</article>
+            {%- endfor %}
+        {%- endif %}
     {%- endwith %}
 
     <!-- Split view: 1/3 wizard · 2/3 schedule -->
     <div class="grid" style="grid-template-columns: 1fr 2fr; gap: var(--pico-spacing);">
 
+        <!-- ────────── 1. FORM AREA ────────── -->
         <aside style="border-right: 1px dotted lightgray; padding-right: 1rem; background-color: var(--pico-background-color);">
 
-
             <!-- Accordion 1: Create New Program -->
-            <details %} %}disabled{% active_program_id endif if open {%>
+            <details {% if program %}disabled{% endif %} open>
                 <summary><h4>Program name</h4></summary>
-
-                {% if active_program_id %}
-                <p><em>A program is already active. You can add days and events to it.</em></p>
+                {% if program %}
+                    <p><em>A program is already active. You can add days and events to it.</em></p>
                 {% else %}
-                <form method="post">
-                    <input name="form_type" type="hidden" value="new_program">
-
-                    <input name="program_name" placeholder="e.g. 2025 Tech Festival" required type="text"/>
-
-                    <button class="secondary" type="submit">Save Program</button>
-                </form>
+                    <form method="post">
+                        <input type="hidden" name="form_type" value="new_program">
+                        <input name="program_name" placeholder="e.g. 2025 Tech Festival" required type="text"/>
+                        <button class="secondary" type="submit">Save Program</button>
+                    </form>
                 {% endif %}
             </details>
 
-
             <!-- Accordion 2: Add Day -->
-            <details %} %}disabled{% endif if not program {%>
+            <details {% if not program %}disabled{% endif %}>
                 <summary><h4>Add Day</h4></summary>
                 <form method="post">
-                    <input name="form_type" type="hidden" value="day_schedule">
+                    <input type="hidden" name="form_type" value="day_schedule">
 
                     {% if program %}
-                    <label>Your Program: <strong>{{ program.name }}</strong></label>
+                        <label>Your Program: <strong>{{ program.name }}</strong></label>
                     {% endif %}
 
                     <label for="day">Day</label>
                     <select id="day" name="day" required>
                         <option disabled selected value="">Select a day</option>
                         {% for d in days %}
-                        <option value="{{ d }}">{{ d }}</option>
+                            <option value="{{ d }}">{{ d }}</option>
                         {% endfor %}
                     </select>
 
@@ -76,7 +69,7 @@
                     <select id="stage-count" name="stage_count" required>
                         <option disabled selected value="">Select number of stages</option>
                         {% for i in range(1, 11) %}
-                        <option value="{{ i }}">{{ i }}</option>
+                            <option value="{{ i }}">{{ i }}</option>
                         {% endfor %}
                     </select>
 
@@ -84,17 +77,16 @@
                 </form>
             </details>
 
-
             <!-- Accordion 3: Add Events to Program -->
             <details>
                 <summary><h4>Add Events To Your Day</h4></summary>
                 <form enctype="multipart/form-data" method="post">
-                    <input name="form_type" type="hidden" value="new_event">
+                    <input type="hidden" name="form_type" value="new_event">
 
                     <label>Select Day
                         <select name="day" required>
                             {% for d in days %}
-                            <option value="{{ d }}">{{ d }}</option>
+                                <option value="{{ d }}">{{ d }}</option>
                             {% endfor %}
                         </select>
                     </label>
@@ -104,8 +96,7 @@
                     </label>
 
                     <label>Event description
-                        <textarea maxlength="240" name="detail" placeholder="What happens? (max 240 chars)" required
-                                  rows="2"></textarea>
+                        <textarea maxlength="240" name="detail" placeholder="What happens? (max 240 chars)" required rows="2"></textarea>
                     </label>
 
                     <label>Event picture (optional)
@@ -124,24 +115,21 @@
                 </form>
             </details>
 
+            <!-- Clear Program Button -->
             <form method="post" style="margin-top: 1rem;">
-                <input name="form_type" type="hidden" value="clear_program">
-                <button class="contrast" onclick="return confirm('Are you sure you want to clear the current program?')"
-                        type="submit">
+                <input type="hidden" name="form_type" value="clear_program">
+                <button class="contrast" type="submit" onclick="return confirm('Are you sure you want to clear the current program?')">
                     Clear Program
                 </button>
             </form>
 
         </aside>
 
-
         <!-- ────────── 2. SCHEDULE (right‑two‑thirds) ────────── -->
-        <section style="overflow-x: auto; width: 100%; display: block;padding-left: 1rem;">
+        <section style="overflow-x: auto; width: 100%; display: block; padding-left: 1rem;">
             {% include "program_template.html" %}
         </section>
     </div>
-
-
 </main>
 </body>
 </html>
