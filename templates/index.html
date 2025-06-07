@@ -83,13 +83,18 @@
                 <form enctype="multipart/form-data" method="post">
                     <input type="hidden" name="form_type" value="new_event">
 
-                    <label>Select Day
-                        <select name="day" required>
-                            {% for d in days %}
-                                <option value="{{ d }}">{{ d }}</option>
+                   <label>Select Day
+                    <select name="day" required>
+                        {% if program and program.days %}
+                            {% for d in program.days %}
+                                <option value="{{ d.day }}">{{ d.day }}</option>
                             {% endfor %}
-                        </select>
-                    </label>
+                        {% else %}
+                            <option disabled selected>No days available</option>
+                        {% endif %}
+                    </select>
+                </label>
+
 
                     <label>Event title
                         <input name="title" placeholder="Event title" required type="text"/>
