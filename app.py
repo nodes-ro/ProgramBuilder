@@ -4,12 +4,12 @@ app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
 program = None
-events = []  # Optional, for event support later
+events = []
 DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    global program
+    global program, events
 
     if request.method == "POST":
         form_type = request.form.get("form_type")
@@ -23,8 +23,9 @@ def home():
                     program = {
                         "id": 1,
                         "name": program_name,
-                        "days": []  # ✅ Correct structure
+                        "days": []
                     }
+                    events = []
                     flash("Your program has been created — you can now add days.", "success")
                 else:
                     flash("Program name is required.", "error")
@@ -40,7 +41,6 @@ def home():
                     "stage_count": request.form.get("stage_count")
                 }
 
-                # Optional: prevent duplicates
                 if any(d["day"] == day_info["day"] for d in program["days"]):
                     flash(f"Day '{day_info['day']}' already exists.", "warning")
                 else:
@@ -48,24 +48,34 @@ def home():
                     flash(f"Day '{day_info['day']}' added to the program.", "success")
 
         elif form_type == "new_event":
-            if not program:
+            if not program or not program.get("days"):
                 flash("Create a program and add at least one day before adding events.", "error")
             else:
-                event = {
-                    "day": request.form.get("day"),
-                    "stage": request.form.get("stage"),
-                    "title": request.form.get("title"),
-                    "detail": request.form.get("detail"),
-                    "event_start": request.form.get("event_start"),
-                    "event_end": request.form.get("event_end"),
-                    "picture": None  # You can add file upload support later
-                }
-                events.append(event)
-                flash(f"Event '{event['title']}' added to {event['day']} (Stage {event['stage']}).", "success")
+                day = request.form.get("day")
+                stage = request.form.get("stage")
+                title = request.form.get("title")
+                detail = request.form.get("detail")
+                start = request.form.get("event_start")
+                end = request.form.get("event_ends") or request.form.get("event_end")
 
+                if not all([day, stage, title, detail, start, end]):
+                    flash("All event fields are required.", "error")
+                else:
+                    event = {
+                        "day": day,
+                        "stage": int(stage),
+                        "title": title.strip(),
+                        "detail": detail.strip(),
+                        "event_start": start,
+                        "event_end": end,
+                        "picture": None
+                    }
+                    events.append(event)
+                    flash(f"Event '{title}' added to {day} (Stage {stage}).", "success")
 
         elif form_type == "clear_program":
             program = None
+            events = []
             flash("Program cleared. You can create a new one now.", "info")
 
         return redirect(url_for("home"))
