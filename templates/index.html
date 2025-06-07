@@ -14,129 +14,129 @@
     <h1>Event Program Generator</h1>
 
     {%- with msgs = get_flashed_messages(with_categories=true) %}
-        {%- if msgs %}
-            {%- for cat, msg in msgs %}
-        <article class="alert {{ cat }}">{{ msg }}</article>
-            {%- endfor %}
-        {%- endif %}
+    {%- if msgs %}
+    {%- for cat, msg in msgs %}
+    <article class="alert {{ cat }}">{{ msg }}</article>
+    {%- endfor %}
+    {%- endif %}
     {%- endwith %}
 
     <!-- Split view: 1/3 wizard · 2/3 schedule -->
     <div class="grid" style="grid-template-columns: 1fr 2fr; gap: var(--pico-spacing);">
 
-<aside style="border-right: 1px dotted lightgray; padding-right: 1rem; background-color: var(--pico-background-color);">
+        <aside style="border-right: 1px dotted lightgray; padding-right: 1rem; background-color: var(--pico-background-color);">
 
 
-    <!-- Accordion 1: Create New Program -->
-  <details {% if active_program_id %}disabled{% endif %} open>
-    <summary><h4>Program name</h4></summary>
+            <!-- Accordion 1: Create New Program -->
+            <details %} %}disabled{% active_program_id endif if open {%>
+                <summary><h4>Program name</h4></summary>
 
-    {% if active_program_id %}
-        <p><em>A program is already active. You can add days and events to it.</em></p>
-    {% else %}
-        <form method="post">
-        <input type="hidden" name="form_type" value="new_program">
+                {% if active_program_id %}
+                <p><em>A program is already active. You can add days and events to it.</em></p>
+                {% else %}
+                <form method="post">
+                    <input name="form_type" type="hidden" value="new_program">
 
-                <input name="program_name" placeholder="e.g. 2025 Tech Festival" required type="text"/>
+                    <input name="program_name" placeholder="e.g. 2025 Tech Festival" required type="text"/>
 
-            <button class="secondary" type="submit">Save Program</button>
-        </form>
-    {% endif %}
-</details>
-
-
-<!-- Accordion 2: Add Day -->
-<details {% if not program %}disabled{% endif %}>
-    <summary><h4>Add Day</h4></summary>
-    <form method="post">
-        <input type="hidden" name="form_type" value="day_schedule">
-
-        {% if program %}
-        <label>Your Program: <strong>{{ program.name }}</strong></label>
-        {% endif %}
-
-        <label for="day">Day</label>
-        <select name="day" id="day" required>
-            <option value="" disabled selected>Select a day</option>
-            {% for d in days %}
-                <option value="{{ d }}">{{ d }}</option>
-            {% endfor %}
-        </select>
-
-        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: var(--pico-spacing);">
-            <label for="day_start">Day starts
-                <input id="day_start" name="day_start" required type="time"/>
-            </label>
-            <label for="day_ends">Day ends
-                <input id="day_ends" name="day_ends" required type="time"/>
-            </label>
-        </div>
-
-        <label for="stage-count">How many stages does your event have?</label>
-        <select id="stage-count" name="stage_count" required>
-            <option value="" disabled selected>Select number of stages</option>
-            {% for i in range(1, 11) %}
-            <option value="{{ i }}">{{ i }}</option>
-            {% endfor %}
-        </select>
-
-        <button class="secondary" type="submit">Save Day</button>
-    </form>
-</details>
+                    <button class="secondary" type="submit">Save Program</button>
+                </form>
+                {% endif %}
+            </details>
 
 
+            <!-- Accordion 2: Add Day -->
+            <details %} %}disabled{% endif if not program {%>
+                <summary><h4>Add Day</h4></summary>
+                <form method="post">
+                    <input name="form_type" type="hidden" value="day_schedule">
+
+                    {% if program %}
+                    <label>Your Program: <strong>{{ program.name }}</strong></label>
+                    {% endif %}
+
+                    <label for="day">Day</label>
+                    <select id="day" name="day" required>
+                        <option disabled selected value="">Select a day</option>
+                        {% for d in days %}
+                        <option value="{{ d }}">{{ d }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: var(--pico-spacing);">
+                        <label for="day_start">Day starts
+                            <input id="day_start" name="day_start" required type="time"/>
+                        </label>
+                        <label for="day_ends">Day ends
+                            <input id="day_ends" name="day_ends" required type="time"/>
+                        </label>
+                    </div>
+
+                    <label for="stage-count">How many stages does your event have?</label>
+                    <select id="stage-count" name="stage_count" required>
+                        <option disabled selected value="">Select number of stages</option>
+                        {% for i in range(1, 11) %}
+                        <option value="{{ i }}">{{ i }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <button class="secondary" type="submit">Save Day</button>
+                </form>
+            </details>
 
 
-    <!-- Accordion 3: Add Events to Program -->
-    <details>
-        <summary><h4>Add Events To Your Day</h4></summary>
-        <form enctype="multipart/form-data" method="post">
-            <input type="hidden" name="form_type" value="new_event">
+            <!-- Accordion 3: Add Events to Program -->
+            <details>
+                <summary><h4>Add Events To Your Day</h4></summary>
+                <form enctype="multipart/form-data" method="post">
+                    <input name="form_type" type="hidden" value="new_event">
 
-            <label>Select Day
-                <select name="day" required>
-                    {% for d in days %}
-                    <option value="{{ d }}">{{ d }}</option>
-                    {% endfor %}
-                </select>
-            </label>
+                    <label>Select Day
+                        <select name="day" required>
+                            {% for d in days %}
+                            <option value="{{ d }}">{{ d }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
 
-            <label>Event title
-                <input name="title" placeholder="Event title" required type="text"/>
-            </label>
+                    <label>Event title
+                        <input name="title" placeholder="Event title" required type="text"/>
+                    </label>
 
-            <label>Event description
-                <textarea maxlength="240" name="detail" placeholder="What happens? (max 240 chars)" required rows="2"></textarea>
-            </label>
+                    <label>Event description
+                        <textarea maxlength="240" name="detail" placeholder="What happens? (max 240 chars)" required
+                                  rows="2"></textarea>
+                    </label>
 
-            <label>Event picture (optional)
-                <input accept="image/*" name="picture" type="file"/>
-            </label>
+                    <label>Event picture (optional)
+                        <input accept="image/*" name="picture" type="file"/>
+                    </label>
 
-            <label>Event starts at
-                <input name="event_start" required type="time"/>
-            </label>
+                    <label>Event starts at
+                        <input name="event_start" required type="time"/>
+                    </label>
 
-            <label>Event ends at
-                <input name="event_ends" required type="time"/>
-            </label>
+                    <label>Event ends at
+                        <input name="event_ends" required type="time"/>
+                    </label>
 
-            <button class="secondary" type="submit">Add Event</button>
-        </form>
-    </details>
+                    <button class="secondary" type="submit">Add Event</button>
+                </form>
+            </details>
 
-       <form method="post" style="margin-top: 1rem;">
-    <input type="hidden" name="form_type" value="clear_program">
-    <button class="contrast" type="submit" onclick="return confirm('Are you sure you want to clear the current program?')">
-        Clear Program
-    </button>
-</form>
+            <form method="post" style="margin-top: 1rem;">
+                <input name="form_type" type="hidden" value="clear_program">
+                <button class="contrast" onclick="return confirm('Are you sure you want to clear the current program?')"
+                        type="submit">
+                    Clear Program
+                </button>
+            </form>
 
-</aside>
+        </aside>
 
 
         <!-- ────────── 2. SCHEDULE (right‑two‑thirds) ────────── -->
-    <section style="overflow-x: auto; width: 100%; display: block;padding-left: 1rem;">
+        <section style="overflow-x: auto; width: 100%; display: block;padding-left: 1rem;">
             {% include "program_template.html" %}
         </section>
     </div>
