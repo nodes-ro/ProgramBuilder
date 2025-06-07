@@ -5,17 +5,20 @@
     <title>Event Program Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet"/>
 
+
 </head>
 <body class="container">
+
+
 <main>
     <h1>Event Program Generator</h1>
 
     {%- with msgs = get_flashed_messages(with_categories=true) %}
-    {%- if msgs %}
-    {%- for cat, msg in msgs %}
-    <article class="alert {{ cat }}">{{ msg }}</article>
-    {%- endfor %}
-    {%- endif %}
+        {%- if msgs %}
+            {%- for cat, msg in msgs %}
+        <article class="alert {{ cat }}">{{ msg }}</article>
+            {%- endfor %}
+        {%- endif %}
     {%- endwith %}
 
     <!-- Split view: 1/3 wizard · 2/3 schedule -->
@@ -23,11 +26,36 @@
 
         <!-- ────────── 1. WIZARD (left‑third) ────────── -->
         <aside>
-            <!-- Accordion 1: New Event -->
+
+            <!-- Accordion 1: New Program -->
             <details open>
-                <summary><h3>New Event</h3></summary>
+                <summary><h4>Create New Program</h4></summary>
+                <form method="post">
+                    <input type="hidden" name="form_type" value="new_program">
+
+                    <label>Program name
+                        <input name="program_name" placeholder="e.g. 2025 Tech Festival" required type="text"/>
+                    </label>
+
+
+                    <button class="secondary" type="submit">Create Program</button>
+                </form>
+            </details>
+
+            <!-- Accordion 2: Add Event to Program -->
+            <details>
+                <summary><h4>Add Events to Program</h4></summary>
                 <form enctype="multipart/form-data" method="post">
-                    <!-- Day selector -->
+                    <input type="hidden" name="form_type" value="new_event">
+
+                    <label>Select Program
+                        <select name="program_id" required>
+                            {% for program in programs %}
+                            <option value="{{ program.id }}">{{ program.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+
                     <label>Day
                         <select name="day" required>
                             {% for d in days %}
@@ -37,32 +65,27 @@
                     </label>
 
                     <div class="grid" style="grid-template-columns: 1fr 1fr; gap: var(--pico-spacing);">
-
-                        <!-- Start & duration of the whole event -->
-                        <label>Day starts&nbsp;
+                        <label>Day starts
                             <input name="day_start" required type="time"/>
                         </label>
 
-                        <label>Day ends&nbsp;
+                        <label>Day ends
                             <input name="day_ends" required type="time"/>
                         </label>
-
                     </div>
-                    <hr/>
 
-                    <label>Event details
+                    <label>Event title
                         <input name="title" placeholder="Event title" required type="text"/>
                     </label>
 
-                    <!-- Description & optional picture -->
-                    <textarea maxlength="240" name="detail" placeholder="Event description. What happens? (max 240 chars)"
-                              required rows="2"></textarea>
+                    <label>Event description
+                        <textarea maxlength="240" name="detail" placeholder="What happens? (max 240 chars)" required rows="2"></textarea>
+                    </label>
 
-                    <label>Event picture&nbsp;(optional)
+                    <label>Event picture (optional)
                         <input accept="image/*" name="picture" type="file"/>
                     </label>
 
-                    <!-- Start & duration -->
                     <label>Event starts at
                         <input name="event_start" required type="time"/>
                     </label>
@@ -71,8 +94,7 @@
                         <input name="event_ends" required type="time"/>
                     </label>
 
-                    <!-- Stage name -->
-                    <label>Stage&nbsp;(optional)
+                    <label>Stage (optional)
                         <input name="stage" placeholder="Stage name (e.g. Main, Workshop)" type="text"/>
                     </label>
 
@@ -80,20 +102,6 @@
                 </form>
             </details>
 
-            <!-- Accordion 2: Program Settings -->
-            <details>
-                <summary><h3>Program Settings</h3></summary>
-                <form enctype="multipart/form-data" method="post">
-                    <label>Time axis resolution
-                        <select name="TIME_AXIS" required>
-                            {% for t in time_axis %}
-                            <option value="{{ t }}">{{ t }}</option>
-                            {% endfor %}
-                        </select>
-                    </label>
-                    <button class="secondary" type="submit">Save settings</button>
-                </form>
-            </details>
         </aside>
 
         <!-- ────────── 2. SCHEDULE (right‑two‑thirds) ────────── -->
@@ -101,8 +109,6 @@
             {% include "program_template.html" %}
         </section>
     </div>
-
 </main>
-
 </body>
 </html>

@@ -1,0 +1,17 @@
+
+{% if events %}
+    <ul>
+        {% for event in events %}
+            <li>
+                <strong>{{ event.title }}</strong> ({{ event.day }}, {{ event.event_start }}–{{ event.event_end }})<br/>
+                <small>{{ event.detail }}</small><br/>
+                {% if event.stage %}<em>Stage: {{ event.stage }}</em><br/>{% endif %}
+                {% if event.picture %}
+                    <img src="{{ url_for('static', filename=event.picture) }}" alt="Event image" style="max-width:100px;"/>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No program yet.</p>
+{% endif %}
