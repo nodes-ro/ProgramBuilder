@@ -45,6 +45,7 @@ def home():
                     flash(f"Day '{day_info['day']}' already exists.", "warning")
                 else:
                     program["days"].append(day_info)
+                    program["days"].sort(key=lambda d: DAYS.index(d["day"]))
                     flash(f"Day '{day_info['day']}' added to the program.", "success")
 
         elif form_type == "new_event":
