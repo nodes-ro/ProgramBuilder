@@ -7,7 +7,9 @@
         <ul>
             {% for day in program.days %}
             {% set tab_id = day.day | lower | replace(" ", "_") %}
-            <li><a %} %}class="active" endif href="#{{ tab_id }}" if loop.first role="tab" {% {%>{{ day.day }}</a></li>
+            <li>
+                <a href="#{{ tab_id }}" role="tab" {% if loop.first %}class="active"{% endif %}>{{ day.day }}</a>
+            </li>
             {% endfor %}
         </ul>
     </nav>
@@ -19,10 +21,10 @@
     {% set end_hour = day.day_ends.split(':')[0] | int %}
     {% set stage_count = day.stage_count | int %}
 
-    <section %} %}style="display:none;" endif id="{{ tab_id }}" if loop.first not role="tabpanel" {% {%>
+    <section id="{{ tab_id }}" role="tabpanel" {% if not loop.first %}style="display:none;"{% endif %}>
         <h4>{{ day.day }}</h4>
 
-        <table>
+        <table class="striped">
             <thead>
             <tr>
                 <th>Time</th>
@@ -58,13 +60,19 @@
                 {% set duration_slots = (ev_end_minutes - ev_start_minutes) // interval_minutes %}
 
                 {% if ev_start_minutes == current_minutes %}
-                <td rowspan="{{ duration_slots }}">
-                    <div style="background-color: #e0f7fa; padding: 0.5rem; border-radius: 6px;">
+               <td rowspan="{{ duration_slots }}" style="
+    background-color: #f0f8ff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    vertical-align: top;
+">
+  <strong>{{ event.title }}</strong><br>
+  <small style="color: #555;">{{ event.event_start }} → {{ event.event_end }}</small>
+  <p style="margin-top: 0.5rem; margin-bottom: 0;">{{ event.detail }}</p>
+</td>
 
-                        <strong>{{ event.title }}</strong><br>
-                        <small>{{event.event_start }} -> {{ event.event_end }} </small><br>
-                        <em>{{ event.detail }}</em>
-                    </div>
+
+
                 </td>
                 {% set found = true %}
                 {% endif %}
@@ -72,7 +80,6 @@
                 {% endfor %}
 
                 {% if not found %}
-                {# Check if this slot is within a previously started event, and skip rendering a cell #}
                 {% set skip = false %}
                 {% for event in events %}
                 {% if event.day == day.day and event.stage|int == stage %}
@@ -93,8 +100,6 @@
             </tr>
             {% endfor %}
             </tbody>
-
-
         </table>
     </section>
     {% endfor %}
@@ -103,30 +108,31 @@
 <!-- Tab Switching Script -->
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const tabs = document.querySelectorAll("nav[role=tablist] a");
-      const panels = document.querySelectorAll("section[role=tabpanel]");
+        const tabs = document.querySelectorAll("nav[role=tablist] a");
+        const panels = document.querySelectorAll("section[role=tabpanel]");
 
-      tabs.forEach(tab => {
-        tab.addEventListener("click", e => {
-          e.preventDefault();
-          const targetId = tab.getAttribute("href").substring(1);
-          panels.forEach(panel => panel.style.display = "none");
-          tabs.forEach(t => t.classList.remove("active"));
-          document.getElementById(targetId).style.display = "block";
-          tab.classList.add("active");
+        tabs.forEach(tab => {
+            tab.addEventListener("click", e => {
+                e.preventDefault();
+                const targetId = tab.getAttribute("href").substring(1);
+                panels.forEach(panel => panel.style.display = "none");
+                tabs.forEach(t => t.classList.remove("active"));
+                document.getElementById(targetId).style.display = "block";
+                tab.classList.add("active");
+            });
         });
-      });
     });
 </script>
 
 <!-- Optional CSS -->
 <style>
     nav[role=tablist] a.active {
-      font-weight: bold;
-      border-bottom: 2px solid currentColor;
+        font-weight: bold;
+        border-bottom: 2px solid currentColor;
     }
+
     td {
-      vertical-align: top;
+        vertical-align: top;
     }
 </style>
 {% else %}

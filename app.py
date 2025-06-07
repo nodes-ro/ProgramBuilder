@@ -56,22 +56,31 @@ def home():
                 title = request.form.get("title")
                 detail = request.form.get("detail")
                 start = request.form.get("event_start")
-                end = request.form.get("event_ends") or request.form.get("event_end")
+                end = request.form.get("event_end")
 
                 if not all([day, stage, title, detail, start, end]):
                     flash("All event fields are required.", "error")
                 else:
-                    event = {
-                        "day": day,
-                        "stage": int(stage),
-                        "title": title.strip(),
-                        "detail": detail.strip(),
-                        "event_start": start,
-                        "event_end": end,
-                        "picture": None
-                    }
-                    events.append(event)
-                    flash(f"Event '{title}' added to {day} (Stage {stage}).", "success")
+                    # Find the selected day
+                    day_obj = next((d for d in program["days"] if d["day"] == day), None)
+                    if not day_obj:
+                        flash(f"Day '{day}' not found in the current program.", "error")
+                    elif int(stage) > int(day_obj["stage_count"]):
+                        flash(f"Stage {stage} exceeds the number of stages ({day_obj['stage_count']}) for {day}.",
+                              "error")
+                    else:
+                        event = {
+                            "day": day,
+                            "stage": int(stage),
+                            "title": title.strip(),
+                            "detail": detail.strip(),
+                            "event_start": start,
+                            "event_end": end,
+                            "picture": None
+                        }
+                        events.append(event)
+                        flash(f"Event '{title}' added to {day} (Stage {stage}).", "success")
+
 
         elif form_type == "clear_program":
             program = None
