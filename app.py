@@ -82,6 +82,18 @@ def home():
                         events.append(event)
                         flash(f"Event '{title}' added to {day} (Stage {stage}).", "success")
 
+        elif form_type == "set_interval":
+            if not program:
+                flash("Create a program first.", "error")
+            else:
+                try:
+                    interval = int(request.form.get("slot_interval", 30))
+                    if interval not in (60, 30, 15, 10):
+                        raise ValueError
+                    program["slot_interval"] = interval
+                    flash(f"Slot interval set to {interval} minutes.", "success")
+                except ValueError:
+                    flash("Invalid interval.", "error")
 
         elif form_type == "clear_program":
             program = None

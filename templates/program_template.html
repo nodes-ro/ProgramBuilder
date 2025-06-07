@@ -23,7 +23,8 @@
   </ul>
 </nav>
 
-{% set interval = 30 %}
+{% set interval = program.slot_interval | default(30) %}
+
 {% for d in program.days %}
   {% set tid = d.day|lower|replace(" ", "_") %}
   {% set stages = d.stage_count|int %}
@@ -53,7 +54,7 @@
                 <td style="border-bottom:none;"></td>
               {% else %}
                 {% set rendered = false %}
-                {% for ev in events if ev.day == d.day and ev.stage|int == s %}
+{% for ev in events if ev.day == d.day and ev.stage|int == s and ev.stage|int <= stages %}
                   {% set st = ev.event_start.split(':') %}
                   {% set en = ev.event_end.split(':') %}
                   {% set st_m = st[0]|int * 60 + st[1]|int %}
