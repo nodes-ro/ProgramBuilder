@@ -4,6 +4,7 @@
     <meta charset="utf-8"/>
     <title>Event Program Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet"/>
+
 </head>
 <body class="container">
 <main>
@@ -24,110 +25,84 @@
         <aside>
             <!-- Accordion 1: New Event -->
             <details open>
-              <summary><h3>New Event</h3></summary>
-              <form enctype="multipart/form-data" method="post">
-                  <!-- Day selector -->
-                  <label>Day
-                      <select name="day" required>
-                          {% for d in days %}
-                          <option value="{{ d }}">{{ d }}</option>
-                          {% endfor %}
-                      </select>
-                  </label>
-                  <hr/>
+                <summary><h3>New Event</h3></summary>
+                <form enctype="multipart/form-data" method="post">
+                    <!-- Day selector -->
+                    <label>Day
+                        <select name="day" required>
+                            {% for d in days %}
+                            <option value="{{ d }}">{{ d }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
 
-                  <label>Event details
-                    <input name="title" placeholder="Event title" required type="text"/>
-                  </label>
+                    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: var(--pico-spacing);">
 
-                  <!-- Description & optional picture -->
-                  <textarea name="detail" placeholder="Event description. What happens? (max 240 chars)" required maxlength="240" rows="2"></textarea>
+                        <!-- Start & duration of the whole event -->
+                        <label>Day starts&nbsp;
+                            <input name="day_start" required type="time"/>
+                        </label>
 
-                  <label>Event picture&nbsp;(optional)
-                      <input accept="image/*" name="picture" type="file"/>
-                  </label>
+                        <label>Day ends&nbsp;
+                            <input name="day_ends" required type="time"/>
+                        </label>
 
-                  <!-- Start & duration -->
-                  <label>Start&nbsp;time
-                      <input name="time" required type="time"/>
-                  </label>
+                    </div>
+                    <hr/>
 
-                  <label>Duration&nbsp;(min)
-                      <input
-                              min="5"
-                              name="duration"
-                              oninput="this.setCustomValidity('')"
-                              oninvalid="this.setCustomValidity('Use 5-minute increments: 5, 10, 15 …')"
-                              required
-                              step="5"
-                              type="number" />
-                  </label>
+                    <label>Event details
+                        <input name="title" placeholder="Event title" required type="text"/>
+                    </label>
 
-                  <!-- Stage name -->
-                  <label>Stage&nbsp;(optional)
-                      <input name="stage" placeholder="Stage name (e.g. Main, Workshop)" type="text"/>
-                  </label>
+                    <!-- Description & optional picture -->
+                    <textarea maxlength="240" name="detail" placeholder="Event description. What happens? (max 240 chars)"
+                              required rows="2"></textarea>
 
-                  <button class="secondary" type="submit">Add Event</button>
-              </form>
+                    <label>Event picture&nbsp;(optional)
+                        <input accept="image/*" name="picture" type="file"/>
+                    </label>
+
+                    <!-- Start & duration -->
+                    <label>Event starts at
+                        <input name="event_start" required type="time"/>
+                    </label>
+
+                    <label>Event ends at
+                        <input name="event_ends" required type="time"/>
+                    </label>
+
+                    <!-- Stage name -->
+                    <label>Stage&nbsp;(optional)
+                        <input name="stage" placeholder="Stage name (e.g. Main, Workshop)" type="text"/>
+                    </label>
+
+                    <button class="secondary" type="submit">Add Event</button>
+                </form>
             </details>
 
             <!-- Accordion 2: Program Settings -->
             <details>
-              <summary><h3>Program Settings</h3></summary>
-              <form method="post">
-                  <label>Time axis resolution
-                      <select name="TIME_AXIS" required>
-                          {% for t in time_axis %}
-                          <option value="{{ t }}">{{ t }}</option>
-                          {% endfor %}
-                      </select>
-                  </label>
-                  <button class="secondary" type="submit">Save settings</button>
-              </form>
+                <summary><h3>Program Settings</h3></summary>
+                <form enctype="multipart/form-data" method="post">
+                    <label>Time axis resolution
+                        <select name="TIME_AXIS" required>
+                            {% for t in time_axis %}
+                            <option value="{{ t }}">{{ t }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <button class="secondary" type="submit">Save settings</button>
+                </form>
             </details>
         </aside>
 
         <!-- ────────── 2. SCHEDULE (right‑two‑thirds) ────────── -->
-        <section>
-            <h2 align="center">Schedule</h2>
-
-            {% if sorted_times %}
-            <table role="grid">
-                <thead>
-                <tr>
-                    <th>Time</th>
-                    {% for d in days %}
-                    <th>{{ d }}</th>
-                    {% endfor %}
-                </tr>
-                </thead>
-                <tbody>
-                {% for t in sorted_times %}
-                <tr>
-                    <th scope="row">{{ t }}</th>
-                    {% for d in days %}
-                    {% set ev = schedule[t].get(d) %}
-                    <td>
-                        {% if ev %}
-                        <strong>{{ ev.title if ev.title else ev.detail }}</strong><br/>
-                        <small>{{ ev.duration }} min</small><br/>
-                        {% if ev.img %}
-                        <img alt="event picture" src="{{ url_for('static', filename='uploads/' ~ ev.img) }}" style="max-width: 80px; border-radius: 0.5rem;"/>
-                        {% endif %}
-                        {% else %}&nbsp;{% endif %}
-                    </td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <p align="center">No events yet — add one on the left!</p>
-            {% endif %}
+        <section style="display:flex;flex-direction:column;align-items:center;">
+            {% include "program_template.html" %}
         </section>
     </div>
 
 </main>
+
 </body>
 </html>
