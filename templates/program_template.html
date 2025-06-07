@@ -1,17 +1,71 @@
+{% if program %}
+<h3>{{ program.name }}</h3>
 
-{% if events %}
+{% set days_in_program = program.days | map(attribute='day') | list %}
+{% set unique_days = days_in_program | unique %}
+
+<!-- Tab Navigation -->
+<nav>
     <ul>
-        {% for event in events %}
-            <li>
-                <strong>{{ event.title }}</strong> ({{ event.day }}, {{ event.event_start }}–{{ event.event_end }})<br/>
-                <small>{{ event.detail }}</small><br/>
-                {% if event.stage %}<em>Stage: {{ event.stage }}</em><br/>{% endif %}
-                {% if event.picture %}
-                    <img src="{{ url_for('static', filename=event.picture) }}" alt="Event image" style="max-width:100px;"/>
-                {% endif %}
-            </li>
+        {% for day in unique_days %}
+        <li><a href="#{{ day | lower }}" onclick="showTab('{{ day | lower }}')">{{ day }}</a></li>
         {% endfor %}
     </ul>
+</nav>
+
+<!-- Tab Content Panels -->
+{% for day in unique_days %}
+<section id="{{ day | lower }}" class="day-tab" style="display: none;">
+    <h4>{{ day }}</h4>
+    {% set day_events = events | selectattr("day", "equalto", day) | list %}
+    {% if day_events %}
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Time</th>
+                <th>Stage</th>
+                <th>Description</th>
+                <th>Image</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in day_events %}
+            <tr>
+                <td>{{ event.title }}</td>
+                <td>{{ event.event_start }} – {{ event.event_end }}</td>
+                <td>{{ event.stage or "-" }}</td>
+                <td>{{ event.detail }}</td>
+                <td>
+                    {% if event.picture %}
+                    <img src="{{ url_for('static', filename=event.picture) }}" alt="Event image" style="max-width:80px;"/>
+                    {% else %}
+                    —
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No events scheduled for {{ day }}.</p>
+    {% endif %}
+</section>
+{% endfor %}
+
+<script>
+    function showTab(dayId) {
+        document.querySelectorAll('.day-tab').forEach(el => el.style.display = 'none');
+        document.getElementById(dayId).style.display = 'block';
+    }
+
+    // Show first tab by default
+    document.addEventListener("DOMContentLoaded", () => {
+        const firstTab = document.querySelector('.day-tab');
+        if (firstTab) firstTab.style.display = 'block';
+    });
+</script>
+
 {% else %}
-    <p>No program yet.</p>
+<p>No program yet.</p>
 {% endif %}
