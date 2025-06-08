@@ -170,7 +170,7 @@
   <form enctype="multipart/form-data" method="post">
     <input type="hidden" name="form_type" value="set_interval">
     <label>
-      Slot interval
+      Time interval
       {% set cur = program.get('slot_interval', 30) %}
       <select name="slot_interval" required onchange="this.form.submit()">
         <option value="60" {{ 'selected' if cur==60 }}>60 min</option>
