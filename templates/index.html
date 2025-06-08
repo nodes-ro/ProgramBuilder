@@ -48,7 +48,7 @@
 
             <!-- 1) Program Overview -->
             <details class="menu" aria-haspopup="true" {% if program %}disabled{% endif %}>
-                <summary class="secondary outline" role="button">Program Overview</summary>
+                <summary class="secondary outline" role="button"> <i class="fa-solid fa-ellipsis-vertical"></i> Program Overview</summary>
                 {% if program %}
                   <p><em>A program is already active. You can add days and events to it or clear it.</em></p>
                   <form method="post" style="margin-top: var(--size-3);">
@@ -77,7 +77,7 @@
 
             <!-- 2) Add Day -->
             <details {% if not program %}disabled{% endif %}>
-                <summary class="secondary outline" role="button">Add Day</summary>
+                <summary class="secondary outline" role="button"><i class="fa-solid fa-ellipsis-vertical"></i> Add Day</summary>
                 <form method="post">
                     <input name="form_type" type="hidden" value="day_schedule">
 
@@ -128,7 +128,7 @@
 
             <!-- 3) Add Events -->
             <details>
-                <summary class="secondary outline" role="button">Add Events</summary>
+                <summary class="secondary outline" role="button"><i class="fa-solid fa-ellipsis-vertical"></i> Add Events</summary>
                 <form enctype="multipart/form-data" method="post">
                     <input name="form_type" type="hidden" value="new_event">
 

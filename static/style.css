@@ -35,3 +35,9 @@
       border-bottom: 4px solid transparent;
       border-image: linear-gradient(to right, #5d6b89, #fff) 1;
     }
+
+input[type="time"] {
+  font-size: 0.85rem;
+  padding: 0.3rem 0.5rem;
+  line-height: 1.2;
+}
