@@ -154,22 +154,23 @@
                       </select>
                     </label>
 
-                    <label>Event title
                       <input name="title" placeholder="Event title" required type="text"/>
-                    </label>
 
-                    <label>Event description
                       <textarea
                         maxlength="240"
                         name="detail"
-                        placeholder="What happens? (max 240 chars)"
+                        placeholder="Event description. (max 240 chars)"
                         required
                         rows="2"></textarea>
-                    </label>
 
-                    <label>Event picture (optional)
-                      <input accept="image/*" name="picture" type="file"/>
-                    </label>
+                   <label for="picture_url">Event picture URL (optional)</label>
+                    <input
+                      type="url"
+                      name="picture_url"
+                      id="picture_url"
+                      placeholder="https://.../your_image"
+                    />
+
 
                     <label>Event starts at
                       <input
