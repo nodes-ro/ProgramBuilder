@@ -49,7 +49,7 @@
                     {% set st_min = st[0]|int*60 + st[1]|int %}
                     {% set en_min = en[0]|int*60 + en[1]|int %}
                     {% if slot_min >= st_min and slot_min < en_min %}
-                      <strong>{{ ev.title }}</strong><br>
+                      <strong data-tooltip="{{ ev.detail }}">{{ ev.title }}</strong><br>
                       <small>{{ ev.event_start }}→{{ ev.event_end }}</small>
                       {% set cell_rendered = true %}
                     {% endif %}
