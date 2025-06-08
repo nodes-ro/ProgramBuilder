@@ -3,33 +3,33 @@
 <head>
     <meta charset="utf-8"/>
     <title>Event Program Generator</title>
-    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" rel="stylesheet"/>
 
     <style>
 
-#flash-messages {
-  position: fixed;
-  bottom: 1rem;
-  left: 1rem;
-  z-index: 9999;
-  max-width: 300px;
-  font-size: 0.85rem;
-}
+        #flash-messages {
+          position: fixed;
+          bottom: 1rem;
+          left: 1rem;
+          z-index: 9999;
+          max-width: 300px;
+          font-size: 0.85rem;
+        }
 
-.flash-msg {
-  background: #f0f8ff;
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 0.5rem;
-  border-left: 4px solid #2196f3;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+        .flash-msg {
+          background: #f0f8ff;
+          padding: 0.5rem 0.75rem;
+          margin-bottom: 0.5rem;
+          border-left: 4px solid #2196f3;
+          border-radius: 4px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
 
-/* Optional: Category styling */
-.flash-msg.error { border-color: #e53935; background: #ffebee; }
-.flash-msg.success { border-color: #43a047; background: #e8f5e9; }
-.flash-msg.warning { border-color: #fdd835; background: #fffde7; }
-.flash-msg.info { border-color: #1e88e5; background: #e3f2fd; }
+        /* Optional: Category styling */
+        .flash-msg.error { border-color: #e53935; background: #ffebee; }
+        .flash-msg.success { border-color: #43a047; background: #e8f5e9; }
+        .flash-msg.warning { border-color: #fdd835; background: #fffde7; }
+        .flash-msg.info { border-color: #1e88e5; background: #e3f2fd; }
 
 
     </style>
@@ -42,14 +42,14 @@
     <h2>Event Program Generator</h2>
 
     <div id="flash-messages">
-  {%- with msgs = get_flashed_messages(with_categories=true) %}
-    {%- if msgs %}
-      {%- for cat, msg in msgs %}
+        {%- with msgs = get_flashed_messages(with_categories=true) %}
+        {%- if msgs %}
+        {%- for cat, msg in msgs %}
         <div class="flash-msg {{ cat }}">{{ msg }}</div>
-      {%- endfor %}
-    {%- endif %}
-  {%- endwith %}
-</div>
+        {%- endfor %}
+        {%- endif %}
+        {%- endwith %}
+    </div>
 
 
     <!-- Split view: 1/3 wizard · 2/3 schedule -->
@@ -59,8 +59,8 @@
         <aside style="border-right: 1px dotted lightgray; padding-right: 1rem; background-color: var(--pico-background-color);">
 
             <!-- Accordion 1: Create New Program -->
-            <details {% if program %}disabled{% endif %}>
-                <summary><h4>Program name</h4></summary>
+            <details %} %}disabled{% endif if program {%>
+                <summary>Program name</summary>
                 {% if program %}
                 <p><em>A program is already active. You can add days and events to it.</em></p>
                 {% else %}
@@ -73,49 +73,47 @@
             </details>
 
             <!-- Accordion 2: Add Day -->
-    <!-- Accordion 2: Add Day -->
-<details {% if not program %}disabled{% endif %}>
-    <summary><h4>Add Day</h4></summary>
-    <form method="post">
-        <input name="form_type" type="hidden" value="day_schedule">
+            <details %} %}disabled{% endif if not program {%>
+                <summary>Add Day</summary>
+                <form method="post">
+                    <input name="form_type" type="hidden" value="day_schedule">
 
-        {% if program %}
-        <label>Your Program: <strong>{{ program.name }}</strong></label>
-        {% endif %}
+                    {% if program %}
+                    <label>Your Program: <strong>{{ program.name }}</strong></label>
+                    {% endif %}
 
-        <label for="day">Day</label>
-        <select id="day" name="day" required>
-            <option disabled selected value="">Select a day</option>
-            {% for d in days %}
-            <option value="{{ d }}">{{ d }}</option>
-            {% endfor %}
-        </select>
+                    <label for="day">Day</label>
+                    <select id="day" name="day" required>
+                        <option disabled selected value="">Select a day</option>
+                        {% for d in days %}
+                        <option value="{{ d }}">{{ d }}</option>
+                        {% endfor %}
+                    </select>
 
-        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: var(--pico-spacing);">
-            <label for="day_start">Day starts
-                <input id="day_start" name="day_start" required type="time" value="09:00"/>
-            </label>
-            <label for="day_ends">Day ends
-                <input id="day_ends" name="day_ends" required type="time" value="17:00"/>
-            </label>
-        </div>
+                    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: var(--pico-spacing);">
+                        <label for="day_start">Day starts
+                            <input id="day_start" name="day_start" required type="time" value="09:00"/>
+                        </label>
+                        <label for="day_ends">Day ends
+                            <input id="day_ends" name="day_ends" required type="time" value="17:00"/>
+                        </label>
+                    </div>
 
-        <label for="stage-count">How many stages does your event have?</label>
-        <select id="stage-count" name="stage_count" required>
-            <option disabled selected value="">Select number of stages</option>
-            {% for i in range(1, 11) %}
-            <option value="{{ i }}">{{ i }}</option>
-            {% endfor %}
-        </select>
+                    <label for="stage-count">How many stages does your event have?</label>
+                    <select id="stage-count" name="stage_count" required>
+                        <option disabled selected value="">Select number of stages</option>
+                        {% for i in range(1, 11) %}
+                        <option value="{{ i }}">{{ i }}</option>
+                        {% endfor %}
+                    </select>
 
-        <button class="secondary" type="submit">Save Day</button>
-    </form>
-</details>
-
+                    <button class="secondary" type="submit">Save Day</button>
+                </form>
+            </details>
 
             <!-- Accordion 3: Add Events to Program -->
             <details>
-                <summary><h4>Add Events To Your Day</h4></summary>
+                <summary>Add Events To Your Day</summary>
                 <form enctype="multipart/form-data" method="post">
                     <input name="form_type" type="hidden" value="new_event">
 
@@ -166,35 +164,49 @@
             </details>
 
             <!-- New: Interval form -->
-           {% if program %}
-  <form enctype="multipart/form-data" method="post">
-    <input type="hidden" name="form_type" value="set_interval">
-    <label>
-      Time interval
-      {% set cur = program.get('slot_interval', 30) %}
-      <select name="slot_interval" required onchange="this.form.submit()">
-        <option value="60" {{ 'selected' if cur==60 }}>60 min</option>
-        <option value="30" {{ 'selected' if cur==30 }}>30 min</option>
-        <option value="15" {{ 'selected' if cur==15 }}>15 min</option>
-        <option value="10" {{ 'selected' if cur==10 }}>10 min</option>
-      </select>
-    </label>
-  </form>
-{% endif %}
+            {% if program %}
+            <br/>
+            <form enctype="multipart/form-data" method="post">
+                <input name="form_type" type="hidden" value="set_interval">
 
+                {% set cur = program.get('slot_interval', 30) %}
+
+                <details class="dropdown">
+                    <summary class="outline" role="button">
+                        Time interval: {{ cur }} min
+                    </summary>
+
+                    {# 4-column grid of buttons #}
+                    <ul class="interval-options">
+                        {% for val, label in [(60, '60 min'), (30, '30 min'), (15, '15 min'), (10, '10 min')] %}
+                        <li>
+                            <button %} %}aria-current="true" cur==val endif if name="slot_interval"
+                                    type="submit" value="{{ val }}" {% {%>
+                                {{ label }}
+                            </button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </details>
+            </form>
+            {% endif %}
 
 
             <!-- Clear Program Button -->
-            <form method="post" style="margin-top: 1rem;">
+            <div style="margin-top: var(--size-3);">
+                <button class="outline" id="download-schedule" style="width:100%;" type="button">
+                    Download Schedule HTML
+                </button>
+            </div>
+
+            <!-- Clear Program Button -->
+            <form method="post" style="margin-top: var(--size-3);">
                 <input name="form_type" type="hidden" value="clear_program">
-                <button class="contrast" onclick="return confirm('Are you sure you want to clear the current program?')"
-                        type="submit">
+                <button class="contrast outline"
+                        onclick="return confirm('Are you sure you want to clear the current program?')" type="submit">
                     Clear Program
                 </button>
             </form>
-
-       <!--     <button onclick="window.print()">Print Program</button> -->
-            <button id="download-schedule">Download Schedule HTML</button>
 
 
         </aside>
@@ -206,40 +218,40 @@
     </div>
 </main>
 <script>
-  setTimeout(() => {
-    document.querySelectorAll('.flash-msg').forEach(msg => msg.remove());
-  }, 5000); // 5 seconds
+    setTimeout(() => {
+      document.querySelectorAll('.flash-msg').forEach(msg => msg.remove());
+    }, 5000); // 5 seconds
 </script>
 
 <script>
-document.getElementById('download-schedule').addEventListener('click', () => {
-  // 1. Grab the raw HTML of the section
-  const content = document.getElementById('export-section').innerHTML;
+    document.getElementById('download-schedule').addEventListener('click', () => {
+      // 1. Grab the raw HTML of the section
+      const content = document.getElementById('export-section').innerHTML;
 
-  // 2. Build a complete HTML document
-  const html = `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Exported Schedule</title>
-  <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet">
-</head>
-<body>
-  ${content}
-</body>
-</html>`;
+      // 2. Build a complete HTML document
+      const html = `<!doctype html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <title>Exported Schedule</title>
+      <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet">
+    </head>
+    <body>
+      ${content}
+    </body>
+    </html>`;
 
-  // 3. Create a Blob and download
-  const blob = new Blob([html], { type: 'text/html' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = 'schedule.html';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-});
+      // 3. Create a Blob and download
+      const blob = new Blob([html], { type: 'text/html' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = 'schedule.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
 </script>
 
 </body>
