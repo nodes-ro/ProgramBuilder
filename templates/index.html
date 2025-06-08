@@ -34,11 +34,21 @@
             border-color: #e53935 !important;
             color: #e53935 !important;
         }
+
+        .page-title {
+            font-size: 2rem;
+            color: #5d6b89;
+            padding-bottom: 0.5rem;
+            border-bottom: 4px solid transparent;
+            border-image: linear-gradient(to right, #5d6b89, #fff) 1;
+        }
+
     </style>
 </head>
 <body class="container">
 <main>
-    <h2>Event Program Generator</h2>
+    <h2 class="page-title">Event Program Generator</h2>
+
 
     <!-- Flash messages -->
     <div id="flash-messages">
@@ -190,11 +200,12 @@
             </form>
             {% endif %}
 
+              {% if program %}
             <!-- Download Schedule -->
             <div style="margin-top: var(--size-3);">
-                <button class="contrast" id="download-schedule" type="button" style="width:100%;">Download Schedule HTML</button>
+                <button class="contrast" id="download-schedule" type="button" style="width:100%;">Download HTML</button>
             </div>
-
+            {% endif %}
         </aside>
 
         <!-- Schedule Preview (2/3) -->
