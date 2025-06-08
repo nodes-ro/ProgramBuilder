@@ -75,6 +75,7 @@
                 {% endif %}
             </details>
 
+              {% if program %}
             <!-- 2) Add Day -->
             <details {% if not program %}disabled{% endif %}>
                 <summary class="secondary outline" role="button"> ② Add Day</summary>
@@ -85,7 +86,7 @@
                       <label>Your Program: <strong>{{ program.name }}</strong></label>
                     {% endif %}
 
-                    <label for="day">Day</label>
+
                     <select id="day" name="day" required>
                         <option disabled selected value="">Select a day</option>
                         {% for d in days %}
@@ -116,7 +117,7 @@
 
                     <label for="stage-count">How many stages?</label>
                     <select id="stage-count" name="stage_count" required>
-                        <option disabled selected value="">Select number of stages</option>
+                        <option disabled selected value="">Number of stages</option>
                         {% for i in range(1, 11) %}
                           <option value="{{ i }}">{{ i }}</option>
                         {% endfor %}
@@ -125,7 +126,9 @@
                     <button class="secondary" type="submit"><i class="fa-solid fa-calendar-day"></i> Save Day</button>
                 </form>
             </details>
+              {% endif %}
 
+              {% if program %}
             <!-- 3) Add Events -->
             <details>
                 <summary class="secondary outline" role="button"> ③ Add Events</summary>
@@ -189,6 +192,7 @@
                     <button class="secondary" type="submit"><i class="fa-solid fa-plus"></i> Save Event</button>
                 </form>
             </details>
+              {% endif %}
 
             <!-- 4) Interval Selector -->
             {% if program %}
