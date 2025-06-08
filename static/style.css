@@ -1,0 +1,37 @@
+    /* Flash messages container */
+    #flash-messages {
+      position: fixed;
+      bottom: 1rem;
+      left: 1rem;
+      z-index: 9999;
+      max-width: 300px;
+      font-size: 0.85rem;
+    }
+    /* Individual flash message styling */
+    .flash-msg {
+      background: #f0f8ff;
+      padding: 0.5rem 0.75rem;
+      margin-bottom: 0.5rem;
+      border-left: 4px solid #2196f3;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    /* Category-specific colors */
+    .flash-msg.error   { border-color: #e53935; background: #ffebee; }
+    .flash-msg.success { border-color: #43a047; background: #e8f5e9; }
+    .flash-msg.warning { border-color: #fdd835; background: #fffde7; }
+    .flash-msg.info    { border-color: #1e88e5; background: #e3f2fd; }
+
+    /* Clear Program button: red border */
+    .clear-program {
+      border-color: #e53935 !important;
+      color: #e53935 !important;
+    }
+
+    .page-title {
+      font-size: 2rem;
+      color: #5d6b89;
+      padding-bottom: 0.5rem;
+      border-bottom: 4px solid transparent;
+      border-image: linear-gradient(to right, #5d6b89, #fff) 1;
+    }
