@@ -2,12 +2,12 @@
   <h3>{{ program.name }}</h3>
 
   <!-- Tabs -->
-  <nav role="tablist" class="tabs">
+  <nav role='tablist' class='tabs'>
     <ul>
       {% for day in program.days %}
-        {% set tid = day.day|lower|replace(" ", "_") %}
+        {% set tid = day.day|lower|replace(' ', '_') %}
         <li>
-          <a href="#{{ tid }}" role="tab" {% if loop.first %}aria-selected="true"{% endif %}>
+          <a href='#{{ tid }}' role='tab' {% if loop.first %}aria-selected='true'{% endif %}>
             {{ day.day }}
           </a>
         </li>
@@ -18,14 +18,14 @@
   {% set interval = program.slot_interval | default(30) %}
 
   {% for day in program.days %}
-    {% set tid       = day.day|lower|replace(" ", "_") %}
-    {% set stages    = day.stage_count|int %}
-    {% set start_min = (day.day_start.split(':')[0]|int)*60 + (day.day_start.split(':')[1]|int) %}
-    {% set end_min   = (day.day_ends.split(':')[0]|int)*60 + (day.day_ends.split(':')[1]|int) %}
-    {% set slots     = ((end_min - start_min) // interval) %}
+    {% set tid = day.day|lower|replace(' ', '_') %}
+    {% set stages = day.stage_count|int %}
+    {% set start_min = (day.day_start.split(':')[0]|int) * 60 + (day.day_start.split(':')[1]|int) %}
+    {% set end_min = (day.day_ends.split(':')[0]|int) * 60 + (day.day_ends.split(':')[1]|int) %}
+    {% set slots = ((end_min - start_min) // interval) %}
 
-    <section id="{{ tid }}" role="tabpanel" {% if not loop.first %}hidden{% endif %}>
-      <table >
+    <section id='{{ tid }}' role='tabpanel' {% if not loop.first %}hidden{% endif %}>
+      <table>
         <thead>
           <tr>
             <th>Time</th>
@@ -35,26 +35,37 @@
           </tr>
         </thead>
         <tbody>
+          {% set ns = namespace(event_map={}, covered={}) %}
+          {% for ev in events if ev.day == day.day %}
+            {% set st = ev.event_start.split(':') %}
+            {% set en = ev.event_end.split(':') %}
+            {% set st_min = st[0]|int * 60 + st[1]|int %}
+            {% set en_min = en[0]|int * 60 + en[1]|int %}
+            {% set start_slot = ((st_min - start_min) // interval) %}
+            {% set span = ((en_min - st_min) // interval) %}
+            {% set _ = ns.event_map.update({ (start_slot, ev.stage|int): {'event': ev, 'span': span} }) %}
+            {% for j in range(1, span) %}
+              {% set _ = ns.covered.update({ (start_slot + j, ev.stage|int): True }) %}
+            {% endfor %}
+          {% endfor %}
+
           {% for i in range(slots) %}
-            {% set slot_min = start_min + i*interval %}
-            {% set label    = "%02d:%02d"|format(slot_min//60, slot_min%60) %}
+            {% set slot_min = start_min + i * interval %}
+            {% set label = '%02d:%02d'|format(slot_min//60, slot_min%60) %}
             <tr>
               <td>{{ label }}</td>
               {% for s in range(1, stages+1) %}
-                {% set cell_rendered = false %}
-                <td>
-                  {% for ev in events if ev.day==day.day and ev.stage|int==s and not cell_rendered %}
-                    {% set st = ev.event_start.split(':') %}
-                    {% set en = ev.event_end.split(':') %}
-                    {% set st_min = st[0]|int*60 + st[1]|int %}
-                    {% set en_min = en[0]|int*60 + en[1]|int %}
-                    {% if slot_min >= st_min and slot_min < en_min %}
-                      <strong data-tooltip="{{ ev.detail }}">{{ ev.title }}</strong><br>
-                      <small>{{ ev.event_start }}→{{ ev.event_end }}</small>
-                      {% set cell_rendered = true %}
-                    {% endif %}
-                  {% endfor %}
-                </td>
+                {% if ns.event_map.get((i, s)) %}
+                  {% set info = ns.event_map[(i, s)] %}
+                  <td rowspan='{{ info.span }}' data-tooltip='{{ info.event.detail }}'>
+                    <strong>{{ info.event.title }}</strong><br>
+                    <small>{{ info.event.event_start }}→{{ info.event.event_end }}</small>
+                  </td>
+                {% elif ns.covered.get((i, s)) %}
+                  {# skipped: covered by earlier rowspan #}
+                {% else %}
+                  <td></td>
+                {% endif %}
               {% endfor %}
             </tr>
           {% endfor %}
@@ -64,21 +75,20 @@
   {% endfor %}
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const tabs   = document.querySelectorAll('nav[role="tablist"] a');
-      const panels = document.querySelectorAll('section[role="tabpanel"]');
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabs = document.querySelectorAll('nav[role=tablist] a');
+      const panels = document.querySelectorAll('section[role=tabpanel]');
       tabs.forEach(tab => {
-        tab.addEventListener("click", e => {
+        tab.addEventListener('click', e => {
           e.preventDefault();
-          tabs.forEach(t => t.removeAttribute("aria-selected"));
+          tabs.forEach(t => t.removeAttribute('aria-selected'));
           panels.forEach(p => p.hidden = true);
-          tab.setAttribute("aria-selected","true");
-          document.getElementById(tab.getAttribute("href").slice(1)).hidden = false;
+          tab.setAttribute('aria-selected','true');
+          document.getElementById(tab.getAttribute('href').slice(1)).hidden = false;
         });
       });
     });
   </script>
-
 {% else %}
   <p>No program yet.</p>
 {% endif %}
