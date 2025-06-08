@@ -6,20 +6,6 @@
     <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet"/>
 
     <style>
-        @media print {
-          body * {
-            visibility: hidden;
-          }
-          #export-section, #export-section * {
-            visibility: visible;
-          }
-          #export-section {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-          }
-        }
 
 #flash-messages {
   position: fixed;
@@ -207,7 +193,8 @@
                 </button>
             </form>
 
-            <button onclick="window.print()">Print Program</button>
+       <!--     <button onclick="window.print()">Print Program</button> -->
+            <button id="download-schedule">Download Schedule HTML</button>
 
 
         </aside>
@@ -223,5 +210,37 @@
     document.querySelectorAll('.flash-msg').forEach(msg => msg.remove());
   }, 5000); // 5 seconds
 </script>
+
+<script>
+document.getElementById('download-schedule').addEventListener('click', () => {
+  // 1. Grab the raw HTML of the section
+  const content = document.getElementById('export-section').innerHTML;
+
+  // 2. Build a complete HTML document
+  const html = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Exported Schedule</title>
+  <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet">
+</head>
+<body>
+  ${content}
+</body>
+</html>`;
+
+  // 3. Create a Blob and download
+  const blob = new Blob([html], { type: 'text/html' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'schedule.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+</script>
+
 </body>
 </html>
