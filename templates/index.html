@@ -75,6 +75,30 @@
                 {% endif %}
             </details>
 
+
+            <dialog id="about-modal">
+              <article>
+                <header>
+                  <h3>About This App</h3>
+                </header>
+                <p>
+                  <strong>Event Program Generator</strong> helps you build and export structured event schedules with multi-day, multi-stage support. Easily customize time intervals, styles, and export to clean HTML.
+                </p>
+                <footer>
+                  <button class="secondary" onclick="toggleModal('about-modal')">Close</button>
+                </footer>
+              </article>
+            </dialog>
+            <script>
+                function toggleModal(id) {
+              const modal = document.getElementById(id);
+              if (!modal) return;
+              modal.open ? modal.close() : modal.showModal();
+            }
+
+            </script>
+
+
               {% if program %}
             <!-- 2) Add Day -->
             <details {% if not program %}disabled{% endif %}>
@@ -278,6 +302,11 @@
               </div>
 
          {% endif %}
+
+
+             <button class="secondary outline" data-target="about-modal" onclick="toggleModal('about-modal')">
+              <i class="fas fa-info-circle"></i> About Event Program Generator
+            </button>
         </aside>
 
         <!-- Schedule Preview -->
