@@ -25,7 +25,10 @@
 </head>
 <body class="container">
 <main>
-    <h2 class="page-title">Event Program Generator</h2>
+
+    <h2 class="page-title"> <img src="{{ url_for('static', filename='logo.png') }}"
+       alt="Event Program Logo"
+       style="height: 4rem; width: auto;" /> Event Program Generator</h2>
 
     <!-- Flash messages -->
     <div id="flash-messages">
@@ -270,7 +273,7 @@
                   id="download-schedule"
                   style="width:100%;"
                   type="button">
-                  Download HTML
+                   <i class="fas fa-download" ></i> Download HTML
                 </button>
               </div>
 
