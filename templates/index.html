@@ -224,21 +224,44 @@
 
 
 
-            <form method="post">
-              <input type="hidden" name="form_type" value="set_styles">
-            <label for="style-select">Select table styles:</label>
-             <div class="grid" style="
-                  grid-template-columns: auto auto auto;
-                "
-              >
+         <form method="post">
+  <input type="hidden" name="form_type" value="set_styles">
+  <details class="dropdown">
+    <summary class="outline" role="button">
+      Table style:
+      {% if not table_styles %}
+        Default
+      {% else %}
+        {%- for style in table_styles -%}
+          {{ style|capitalize }}{% if not loop.last %}, {% endif %}
+        {%- endfor -%}
+      {% endif %}
+    </summary>
+    <ul class="interval-options">
+      <li>
+        <button
+          type="submit"
+          name="styles"
+          value="default"
+          {% if not table_styles %}aria-current="true"{% endif %}>
+          Default
+        </button>
+      </li>
+      <li>
+        <button
+          type="submit"
+          name="styles"
+          value="striped"
+          {% if 'striped' in table_styles %}aria-current="true"{% endif %}>
+          Striped
+        </button>
+      </li>
+      <!-- add more style options here -->
+    </ul>
+  </details>
+</form>
 
-                <select id="style-select" name="styles">
-                  <option value="default" {% if not table_styles %}selected{% endif %}>Default</option>
-                  <option value="striped" {% if 'striped' in table_styles %}selected{% endif %}>Striped</option>
-                </select>
-                <button class="secondary" type="submit">Apply</button>
-              </div>
-            </form>
+
 
               <!-- 5) Download Schedule -->
               <div style="margin-top: var(--size-3);">
