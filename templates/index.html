@@ -234,7 +234,7 @@
 
               <label for="style-select">Select table styles:</label>
               <select id="style-select" name="styles" >
-                  <option value="default" {% if not table_styles %}selected{% endif %}>Default Style</option>
+                  <option value="default" {% if not table_styles %}selected{% endif %}>Default</option>
                   <option value="striped" {% if 'striped' in table_styles %}selected{% endif %}>Striped</option>
                   <option value="bordered" {% if 'bordered' in table_styles %}selected{% endif %}>Bordered</option>
                   <option value="compact" {% if 'compact' in table_styles %}selected{% endif %}>Compact</option>
