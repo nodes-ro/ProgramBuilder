@@ -200,7 +200,7 @@
                   {% set cur = program.get('slot_interval', 30) %}
                   <details class="dropdown">
                       <summary class="outline" role="button">
-                          Time interval: {{ cur }} min
+                          Time Frame: {{ cur }} min
                       </summary>
                       <ul class="interval-options">
                           {% for val, label in [(60,'60 min'),(30,'30 min'),(15,'15 min'),(10,'10 min')] %}
@@ -228,7 +228,7 @@
   <input type="hidden" name="form_type" value="set_styles">
   <details class="dropdown">
     <summary class="outline" role="button">
-      Table style:
+      Style :
       {% if not table_styles %}
         Default
       {% else %}
