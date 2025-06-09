@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_session import Session
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
@@ -46,6 +47,7 @@ def handle_day_schedule():
         flash(f"Day '{day_info['day']}' added to the program.", "success")
 
 
+
 def handle_new_event():
     if not program or not program.get("days"):
         flash("Create a program and add at least one day before adding events.", "error")
@@ -65,19 +67,51 @@ def handle_new_event():
     day_obj = next((d for d in program["days"] if d["day"] == day), None)
     if not day_obj:
         flash(f"Day '{day}' not found in the current program.", "error")
-    elif int(stage) > int(day_obj["stage_count"]):
-        flash(f"Stage {stage} exceeds the number of stages ({day_obj['stage_count']}) for {day}.", "error")
-    else:
-        events.append({
-            "day": day,
-            "stage": int(stage),
-            "title": title.strip(),
-            "detail": detail.strip(),
-            "event_start": start,
-            "event_end": end,
-            "picture": None  # update later if supporting image URLs
-        })
-        flash(f"Event '{title}' added to {day} (Stage {stage}).", "success")
+        return
+
+    # parse times as datetime.time
+    fmt = "%H:%M"
+    try:
+        ev_start = datetime.strptime(start, fmt).time()
+        ev_end   = datetime.strptime(end, fmt).time()
+        day_start = datetime.strptime(day_obj["day_start"], fmt).time()
+        day_end   = datetime.strptime(day_obj["day_ends"], fmt).time()
+    except ValueError:
+        flash("Invalid time format.", "error")
+        return
+
+    # check ordering
+    if ev_end <= ev_start:
+        flash("Event end time must be after its start time.", "error")
+        return
+
+    # check within day window
+    if ev_start < day_start or ev_end > day_end:
+        flash(
+          f"Event '{title}' must fall between {day_obj['day_start']} and {day_obj['day_ends']} for {day}.",
+          "warning"
+        )
+        return
+
+    if int(stage) > int(day_obj["stage_count"]):
+        flash(
+          f"Stage {stage} exceeds the number of stages ({day_obj['stage_count']}) for {day}.",
+          "error"
+        )
+        return
+
+    # all good—add the event
+    events.append({
+        "day": day,
+        "stage": int(stage),
+        "title": title.strip(),
+        "detail": detail.strip(),
+        "event_start": start,
+        "event_end": end,
+        "picture": None
+    })
+    flash(f"Event '{title}' added to {day} (Stage {stage}).", "success")
+
 
 
 def handle_set_interval():
