@@ -2,7 +2,7 @@
 <html data-theme="light" lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>Event Program Generator</title>
+    <title>Program Builder</title>
 
     <!-- Pico.css -->
     <link
@@ -28,7 +28,7 @@
 
     <h2 class="page-title"> <img src="{{ url_for('static', filename='logo.png') }}"
        alt="Event Program Logo"
-       style="height: 4rem; width: auto;" /> Event Program Generator</h2>
+       style="height: 4rem; width: auto;" /> Program Builder</h2>
 
     <!-- Flash messages -->
     <div id="flash-messages">
@@ -74,30 +74,6 @@
                   </form>
                 {% endif %}
             </details>
-
-
-            <dialog id="about-modal">
-              <article>
-                <header>
-                  <h3>About This App</h3>
-                </header>
-                <p>
-                  <strong>Event Program Generator</strong> helps you build and export structured event schedules with multi-day, multi-stage support. Easily customize time intervals, styles, and export to clean HTML.
-                </p>
-                <footer>
-                  <button class="secondary" onclick="toggleModal('about-modal')">Close</button>
-                </footer>
-              </article>
-            </dialog>
-            <script>
-                function toggleModal(id) {
-              const modal = document.getElementById(id);
-              if (!modal) return;
-              modal.open ? modal.close() : modal.showModal();
-            }
-
-            </script>
-
 
               {% if program %}
             <!-- 2) Add Day -->
@@ -305,8 +281,32 @@
 
 
              <button class="secondary outline" data-target="about-modal" onclick="toggleModal('about-modal')">
-              <i class="fas fa-info-circle"></i> About Event Program Generator
+              <i class="fas fa-info-circle"></i> About Program Builder
             </button>
+              <dialog id="about-modal">
+              <article>
+                <header>
+                  <h3>About This App</h3>
+                </header>
+                <p>
+                  <strong>Program Builder</strong> helps you build and export structured event schedules with multi-day, multi-stage support. Easily customize time intervals, styles, and export to clean HTML in ③ easy steps.
+                </p>
+                  <p>
+                      More information: nodes.ro@proton.me
+                  </p>
+                <footer>
+                  <button class="secondary" onclick="toggleModal('about-modal')">Close</button>
+                </footer>
+              </article>
+            </dialog>
+            <script>
+                function toggleModal(id) {
+              const modal = document.getElementById(id);
+              if (!modal) return;
+              modal.open ? modal.close() : modal.showModal();
+            }
+
+            </script>
         </aside>
 
         <!-- Schedule Preview -->
