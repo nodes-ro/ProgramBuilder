@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask_session import Session
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 program = None
 events = []
@@ -98,6 +101,12 @@ def handle_clear_program():
     events = []
     flash("Program cleared. You can create a new one now.", "info")
 
+def handle_set_styles():
+    selected = request.form.getlist("styles")
+    session["table_styles"] = selected
+    flash("Table styles updated.", "success")
+
+
 # --- Routes ---
 
 @app.route("/", methods=["GET", "POST"])
@@ -107,7 +116,9 @@ def home():
         "day_schedule": handle_day_schedule,
         "new_event": handle_new_event,
         "set_interval": handle_set_interval,
-        "clear_program": handle_clear_program
+        "clear_program": handle_clear_program,
+        "set_styles": handle_set_styles,
+
     }
 
     if request.method == "POST":
@@ -119,7 +130,7 @@ def home():
             flash("Unknown form submission.", "error")
         return redirect(url_for("home"))
 
-    return render_template("index.html", program=program, days=DAYS, events=events)
+    return render_template("index.html", program=program, days=DAYS, events=events, table_styles=session.get("table_styles", []))
 
 
 if __name__ == "__main__":

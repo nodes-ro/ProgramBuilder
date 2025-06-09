@@ -25,7 +25,7 @@
     {% set slots = ((end_min - start_min) // interval) %}
 
     <section id='{{ tid }}' role='tabpanel' {% if not loop.first %}hidden{% endif %}>
-      <table>
+    <table class="{% if table_styles %}{{ ' '.join(table_styles) }}{% endif %}">
         <thead>
           <tr>
             <th>Time</th>
