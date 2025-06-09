@@ -10,7 +10,6 @@ program = None
 events = []
 DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
-
 # --- Handlers ---
 
 def handle_new_program():
@@ -76,7 +75,7 @@ def handle_new_event():
             "detail": detail.strip(),
             "event_start": start,
             "event_end": end,
-            "picture": None
+            "picture": None  # update later if supporting image URLs
         })
         flash(f"Event '{title}' added to {day} (Stage {stage}).", "success")
 
@@ -99,11 +98,16 @@ def handle_clear_program():
     global program, events
     program = None
     events = []
+    session.pop("table_styles", None)  # Clear style on reset
     flash("Program cleared. You can create a new one now.", "info")
+
 
 def handle_set_styles():
     selected = request.form.getlist("styles")
-    session["table_styles"] = selected
+    if "default" in selected:
+        session["table_styles"] = []
+    else:
+        session["table_styles"] = selected
     flash("Table styles updated.", "success")
 
 
@@ -118,7 +122,6 @@ def home():
         "set_interval": handle_set_interval,
         "clear_program": handle_clear_program,
         "set_styles": handle_set_styles,
-
     }
 
     if request.method == "POST":
@@ -130,7 +133,13 @@ def home():
             flash("Unknown form submission.", "error")
         return redirect(url_for("home"))
 
-    return render_template("index.html", program=program, days=DAYS, events=events, table_styles=session.get("table_styles", []))
+    return render_template(
+        "index.html",
+        program=program,
+        days=DAYS,
+        events=events,
+        table_styles=session.get("table_styles", [])
+    )
 
 
 if __name__ == "__main__":

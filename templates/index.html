@@ -224,18 +224,10 @@
               </form>
             {% endif %}
 
-            <!-- 5) Download Schedule -->
+
             {% if program %}
-              <div style="margin-top: var(--size-3);">
-                <button
-                  class="contrast outline"
-                  id="download-schedule"
-                  style="width:100%;"
-                  type="button">
-                  Download HTML
-                </button>
-              </div>
-            {% endif %}
+
+
 
             <form method="post">
               <input type="hidden" name="form_type" value="set_styles">
@@ -251,7 +243,18 @@
               <button class="secondary" type="submit">Apply Table Styles</button>
             </form>
 
+              <!-- 5) Download Schedule -->
+              <div style="margin-top: var(--size-3);">
+                <button
+                  class="contrast outline"
+                  id="download-schedule"
+                  style="width:100%;"
+                  type="button">
+                  Download HTML
+                </button>
+              </div>
 
+         {% endif %}
         </aside>
 
         <!-- Schedule Preview -->
