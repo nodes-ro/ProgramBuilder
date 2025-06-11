@@ -228,41 +228,41 @@
 
 
          <form method="post">
-  <input type="hidden" name="form_type" value="set_styles">
-  <details class="dropdown">
-    <summary class="outline" role="button">
-      Style :
-      {% if not table_styles %}
-        Default
-      {% else %}
-        {%- for style in table_styles -%}
-          {{ style|capitalize }}{% if not loop.last %}, {% endif %}
-        {%- endfor -%}
-      {% endif %}
-    </summary>
-    <ul class="interval-options">
-      <li>
-        <button
-          type="submit"
-          name="styles"
-          value="default"
-          {% if not table_styles %}aria-current="true"{% endif %}>
-          Default
-        </button>
-      </li>
-      <li>
-        <button
-          type="submit"
-          name="styles"
-          value="striped"
-          {% if 'striped' in table_styles %}aria-current="true"{% endif %}>
-          Striped
-        </button>
-      </li>
-      <!-- add more style options here -->
-    </ul>
-  </details>
-</form>
+          <input type="hidden" name="form_type" value="set_styles">
+          <details class="dropdown">
+            <summary class="outline" role="button">
+              Style :
+              {% if not table_styles %}
+                Default
+              {% else %}
+                {%- for style in table_styles -%}
+                  {{ style|capitalize }}{% if not loop.last %}, {% endif %}
+                {%- endfor -%}
+              {% endif %}
+            </summary>
+            <ul class="interval-options">
+              <li>
+                <button
+                  type="submit"
+                  name="styles"
+                  value="default"
+                  {% if not table_styles %}aria-current="true"{% endif %}>
+                  Default
+                </button>
+              </li>
+              <li>
+                <button
+                  type="submit"
+                  name="styles"
+                  value="striped"
+                  {% if 'striped' in table_styles %}aria-current="true"{% endif %}>
+                  Striped
+                </button>
+              </li>
+              <!-- add more style options here -->
+            </ul>
+          </details>
+        </form>
 
 
 
@@ -278,12 +278,12 @@
               </div>
 
          {% endif %}
-<div style="margin-top: var(--size-2);">
 
-             <button  style="width:100%;" class="secondary outline" data-target="about-modal" onclick="toggleModal('about-modal')">
-              <i class="fas fa-info-circle"></i> About Program Builder
-            </button>
-</div>
+            <div style="margin-top: var(--size-2);">
+                <button  style="width:100%;" class="secondary outline" data-target="about-modal" onclick="toggleModal('about-modal')">
+                    <i class="fas fa-info-circle"></i> About Program Builder
+                </button>
+            </div>
               <dialog id="about-modal">
               <article>
                 <header>
