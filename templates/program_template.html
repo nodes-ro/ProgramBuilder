@@ -63,12 +63,10 @@
                   <td rowspan="{{ info.span }}" data-tooltip="{{ info.event.detail }}">
                     {%- if info.event.picture -%}
                         <div style="display:inline-flex; align-items:center; gap:0.25rem;">
-                          <img
-                            src="{{ info.event.picture }}"
+                          <img src="{{ info.event.picture }}"
                             alt="Image for {{ info.event.title }}"
-                            width="40"
-                            height="40"
-                          >
+                            width="80"
+                            height="80" >
                           <strong>{{ info.event.title }}</strong>
                         </div>
                         <br>
