@@ -59,8 +59,6 @@ def handle_new_event():
     detail = request.form.get("detail")
     start = request.form.get("event_start")
     end = request.form.get("event_end")
-    picture = request.form.get("picture_url") or None
-
 
     if not all([day, stage, title, detail, start, end]):
         flash("All event fields are required.", "error")
@@ -110,7 +108,7 @@ def handle_new_event():
         "detail": detail.strip(),
         "event_start": start,
         "event_end": end,
-        "picture": picture
+        "picture": None
     })
     flash(f"Event '{title}' added to {day} (Stage {stage}).", "success")
 
