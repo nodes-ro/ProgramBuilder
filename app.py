@@ -59,7 +59,7 @@ def handle_new_event():
     detail = request.form.get("detail")
     start = request.form.get("event_start")
     end = request.form.get("event_end")
-    picture = request.form.get("picture") or None
+    picture = request.form.get("picture_url") or None
 
     if not all([day, stage, title, detail, start, end]):
         flash("All event fields are required.", "error")
