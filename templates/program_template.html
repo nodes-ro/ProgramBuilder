@@ -61,20 +61,19 @@
                 {%- if ns.event_map.get((i, s)) %}
                   {%- set info = ns.event_map[(i, s)] %}
                   <td rowspan="{{ info.span }}" data-tooltip="{{ info.event.detail }}">
-                    {%- if info.event.picture %}
-                        <figure class="grid" style="align-items: center; ">
+                     {%- if info.event.picture -%}
+                        <div style="display:inline-flex; align-items:center; gap:0.25rem;">
                           <img
                             src="{{ info.event.picture }}"
                             alt="Image for {{ info.event.title }}"
-                            width="80"
-                            height="80"
+                            width="40"
+                            height="40"
                           >
-                          <figcaption>
-                            <strong>{{ info.event.title }}</strong><br>
-                            <small>{{ info.event.event_start }} → {{ info.event.event_end }}</small>
-                          </figcaption>
-                        </figure>
-                      {%- else %}
+                          <strong>{{ info.event.title }}</strong>
+                        </div>
+                        <br>
+                        <small>{{ info.event.event_start }} → {{ info.event.event_end }}</small>
+                      {%- else -%}
                         <strong>{{ info.event.title }}</strong><br>
                         <small>{{ info.event.event_start }} → {{ info.event.event_end }}</small>
                       {%- endif %}
