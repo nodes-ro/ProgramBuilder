@@ -3,7 +3,7 @@ from flask_session import Session
 from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"
+app.secret_key = "supersecretkey2"
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
