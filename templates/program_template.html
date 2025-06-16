@@ -62,7 +62,7 @@
                   {%- set info = ns.event_map[(i, s)] %}
                   <td rowspan="{{ info.span }}" data-tooltip="{{ info.event.detail }}">
                     {%- if info.event.picture %}
-                        <figure class="grid" style="align-items: center; gap: 0.1rem;">
+                        <figure class="grid" style="align-items: center; ">
                           <img
                             src="{{ info.event.picture }}"
                             alt="Image for {{ info.event.title }}"
