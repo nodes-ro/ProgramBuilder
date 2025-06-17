@@ -7,7 +7,6 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY static static
 COPY templates templates
-COPY flask_session flask_session
 
 COPY app.py app.py
 COPY requirements.txt requirements.txt
