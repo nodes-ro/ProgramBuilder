@@ -1,0 +1,4 @@
+# _config.yml
+title: Program Builder
+description: "Program Builder helps you build and export structured event schedules with multi-day, multi-stage support."
+theme: jekyll-theme-minimal
