@@ -57,5 +57,5 @@ Join us on our journey:
 > docker build -t program-builder:0.0.1 .
 
 ### 3. Run the container
-> docker run -d -p 8005:8005 program-builder:0.0.1
+> docker run -d -p 8010:8010 program-builder:0.0.1
 
