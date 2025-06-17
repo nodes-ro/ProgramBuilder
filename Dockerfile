@@ -7,6 +7,8 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY static static
 COPY templates templates
+COPY flask_session flask_session
+
 COPY app.py app.py
 COPY requirements.txt requirements.txt
 
@@ -20,4 +22,4 @@ EXPOSE 8010
 ENV PYTHONUNBUFFERED=1
 
 # Run the Flask app with Gunicorn
-CMD ["gunicorn", "-b", "0.0.0.0:8010", "--workers", "4", "app:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:8010", "--workers", "1", "--reload", "app:app"]
